@@ -1,0 +1,3 @@
+{:nomad-ring {:nrepl {:port 7888}
+              :web {:port 3000}
+              :handler sample-project.web/handler}}
