@@ -1,4 +1,4 @@
-(ns leiningen.nomad-ring
+(ns leiningen.frodo
   (:require [leinjacker.deps :as deps]
             [leinjacker.eval :refer [eval-in-project]]
             [clojure.java.io :as io]
@@ -14,13 +14,13 @@
                    (map io/as-url))
         cl (URLClassLoader. (into-array paths))]
     
-    (.getResource cl (get project :nomad-ring/resource))))
+    (.getResource cl (get project :frodo/config-resource))))
 
 (defn load-nomad-config [nomad-file]
   ;; A bit of a hack, but unfortunately Nomad doesn't currently have a
   ;; 'load config file once' fn...
   (defconfig _config-var nomad-file)
-  (get (_config-var) :nomad-ring))
+  (get (_config-var) :frodo/config))
 
 (defn add-ring-deps [project]
   (-> project
@@ -51,7 +51,7 @@
      (require 'ring.adapter.jetty)
      (require (symbol ~(namespace handler)))))
 
-(defn nomad-ring
+(defn frodo
   [project & args]
   (let [nomad-file (get-nomad-file project)
         nomad-config (load-nomad-config nomad-file)]
