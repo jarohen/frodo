@@ -20,7 +20,7 @@ With Frodo, it's possible to start web applications with:
 
 and have the ports vary by environment.
 
-For more details about what's possible with **Nomad**, please see
+For more details about what's possible with Nomad, please see
 [its project page][1].
 
 (I did use [lein-ring][2] for a bit but, while it is a great plugin,
@@ -45,7 +45,7 @@ Include `lein-frodo` as a plugin in your `project.clj`:
 
 ## Getting started
 
-First, create a **Nomad** configuration file somewhere on your
+First, create a Nomad configuration file somewhere on your
 classpath, and add a `:frodo/config` key, as follows:
 
 *project-root*/resources/config/nomad-config.edn:
@@ -54,12 +54,12 @@ classpath, and add a `:frodo/config` key, as follows:
                     :web {:port 3000}
                     :handler myapp.web/handler}}
 	 
-Then, add an entry in your `project.clj` to tell **Frodo** where your
+Then, add an entry in your `project.clj` to tell Frodo where your
 Nomad file is:
 
     :frodo/config-resource "config/nomad-config.edn"
 
-To run the **Ring** server, run:
+To run the Ring server, run:
 
     lein frodo
 	
