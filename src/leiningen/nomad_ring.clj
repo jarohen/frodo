@@ -24,7 +24,7 @@
 
 (defn add-ring-deps [project]
   (-> project
-      (deps/add-if-missing '[ring "1.2.0"])
+      (deps/add-if-missing '[ring/ring-jetty-adapter "1.2.0"])
       (deps/add-if-missing '[org.clojure/tools.nrepl "0.2.3"])))
 
 (defn run-nrepl-form [config]
