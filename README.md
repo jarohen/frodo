@@ -3,6 +3,12 @@
 A Leiningen plugin to start a Ring server easily via configuration in
 Nomad.
 
+## Dependency
+
+Include `lein-frodo` as a plugin in your `project.clj`:
+
+    :plugins [[jarohen/lein-frodo "0.1.0"]]
+
 ## Why?
 
 Well, I already use **Nomad** for most of my configuration. I
@@ -30,18 +36,12 @@ time to write this!)
 [1]: https://github.com/james-henderson/nomad
 [2]: https://github.com/weavejester/lein-ring
 
-## "About the name...?"
+### "About the name...?"
 
 Yes, it's corny, I'm sorry! I did toy with *lein-nomad-ring*, and
 various permutations, but none of them really seemed to bring together
 Ring and Nomad in the way *lein-frodo* did. Alternatives gratefully
 received!
-
-## Dependency
-
-Include `lein-frodo` as a plugin in your `project.clj`:
-
-    :plugins [[jarohen/lein-frodo "0.1.0"]]
 
 ## Getting started
 
