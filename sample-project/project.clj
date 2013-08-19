@@ -4,5 +4,5 @@
                  [ring "1.2.0"]]
 
   :plugins [[jarohen/nomad-ring "0.1.0-SNAPSHOT"]]
-  
+
   :nomad-ring/resource "config.edn")
