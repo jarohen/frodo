@@ -30,7 +30,7 @@ time to write this!)
 [1]: https://github.com/james-henderson/nomad
 [2]: https://github.com/weavejester/lein-ring
 
-## "About the name..."
+## "About the name...?"
 
 Yes, it's corny, I'm sorry! I did toy with *lein-nomad-ring*, and
 various permutations, but none of them really seemed to bring together
