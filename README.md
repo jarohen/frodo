@@ -109,6 +109,13 @@ Yes please, much appreciated! Please submit via GitHub in the
 traditional manner. (Or, if it fits into 140 chars,
 tweet [@jarohen](https://twitter.com/jarohen))
 
+## Thanks
+
+* Big thanks to [James Reeves](https://github.com/weavejester) for his
+  **lein-ring** project (amongst everything else!) from which I have
+  plundered a couple of ideas and snippets of code. Also, thanks for the
+  general help and advice.
+
 ## License
 
 Copyright © 2013 James Henderson
