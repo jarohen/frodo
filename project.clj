@@ -1,4 +1,4 @@
-(defproject jarohen/lein-frodo "0.1.0-SNAPSHOT"
+(defproject jarohen/lein-frodo "0.1.0"
   :description "A plugin to start a Ring server via configuration in Nomad"
   :url "https://github.com/james-henderson/nomad-ring.git"
   :license {:name "Eclipse Public License"
