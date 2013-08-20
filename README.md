@@ -7,7 +7,7 @@ Nomad.
 
 Include `lein-frodo` as a plugin in your `project.clj`:
 
-    :plugins [[jarohen/lein-frodo "0.1.0"]]
+    :plugins [[jarohen/lein-frodo "0.1.1"]]
 
 ## Why?
 
@@ -98,6 +98,11 @@ are many more possibilities on the [Nomad project page][1].
   care enough to write a patch, it'll be gratefully received!
 
 ## Changes
+
+### 0.1.1
+
+No breaking changes. Better error handling if the user doesn't specify
+a handler.
 
 ### 0.1.0
 
