@@ -36,6 +36,7 @@
 (defn run-web-form [config]
   (when-let [web-port (get-in config [:web :port])]
     (let [handler (get config :handler)]
+      (assert handler "Please configure a handler in your Nomad configuration.")
       `(do
          (ring.adapter.jetty/run-jetty (var ~handler) {:port ~web-port :join? false})
          (println "Started web server, port" ~web-port)))))
