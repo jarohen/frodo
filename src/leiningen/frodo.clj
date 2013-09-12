@@ -22,15 +22,28 @@
   (defconfig _config-var nomad-file)
   (get (_config-var) :frodo/config))
 
-(defn add-ring-deps [project]
+(defn cljs-repl? [config]
+  (boolean (get-in config [:nrepl :cljs-repl?])))
+
+(defn add-ring-deps [project config]
   (-> project
       (deps/add-if-missing '[ring/ring-jetty-adapter "1.2.0"])
-      (deps/add-if-missing '[org.clojure/tools.nrepl "0.2.3"])))
+      (deps/add-if-missing '[org.clojure/tools.nrepl "0.2.3"])
+      
+      (cond->
+       (cljs-repl? config)
+       (deps/add-if-missing '[com.cemerick/austin "0.1.1"]))))
+
+(defn austin-handler-form [config]
+  (when (cljs-repl? config)
+    `(clojure.tools.nrepl.server/default-handler
+       #'cemerick.piggieback/wrap-cljs-repl)))
 
 (defn run-nrepl-form [config]
   (when-let [nrepl-port (get-in config [:nrepl :port])]
-    `(do
-       (clojure.tools.nrepl.server/start-server :port ~nrepl-port)
+    `(do 
+       (clojure.tools.nrepl.server/start-server :port ~nrepl-port
+                                                :handler ~(austin-handler-form config))
        (println "Started nREPL server, port" ~nrepl-port))))
 
 (defn run-web-form [config]
@@ -41,22 +54,41 @@
          (ring.adapter.jetty/run-jetty (var ~handler) {:port ~web-port :join? false})
          (println "Started web server, port" ~web-port)))))
 
+(defn run-cljs-repl [config]
+  (when (cljs-repl? config)
+    `(do
+       (create-ns '~'frodo)
+       (intern '~'frodo '~'reset-cljs-repl!
+               (fn []
+                 (intern '~'frodo '~'repl-env
+                         (reset! cemerick.austin.repls/browser-repl-env
+                                 (cemerick.austin/repl-env)))))
+       (frodo/reset-cljs-repl!)
+       (intern '~'frodo '~'cljs-repl
+               (fn []
+                 (cemerick.austin.repls/cljs-repl frodo/repl-env))))))
+
 (defn make-form [config]
   `(do
      ~(run-nrepl-form config)
+     ~(run-cljs-repl config)
      ~(run-web-form config)))
 
 (defn requires-form [{:keys [handler] :as config}]
   `(do
      (require 'clojure.tools.nrepl.server)
      (require 'ring.adapter.jetty)
-     (require (symbol ~(namespace handler)))))
+     (require (symbol ~(namespace handler)))
+     ~(when (cljs-repl? config)
+        `(do
+           (require 'cemerick.piggieback)
+           (require 'cemerick.austin)
+           (require 'cemerick.austin.repls)))))
 
 (defn frodo
   [project & args]
   (let [nomad-file (get-nomad-file project)
         nomad-config (load-nomad-config nomad-file)]
-    
-    (eval-in-project (add-ring-deps project)
+    (eval-in-project (add-ring-deps project nomad-config)
                      (make-form nomad-config)
                      (requires-form nomad-config))))
