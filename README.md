@@ -7,7 +7,7 @@ Nomad, and also to start and connect to a ClojureScript REPL.
 
 Include `lein-frodo` as a plugin in your `project.clj`:
 
-    :plugins [[jarohen/lein-frodo "0.1.2-SNAPSHOT"]]
+    :plugins [[jarohen/lein-frodo "0.1.2"]]
 
 ## Why?
 
