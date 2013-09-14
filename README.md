@@ -1,13 +1,13 @@
 # Lein-Frodo
 
 A Leiningen plugin to start a Ring server easily via configuration in
-Nomad.
+Nomad, and also to start and connect to a ClojureScript REPL.
 
 ## Dependency
 
 Include `lein-frodo` as a plugin in your `project.clj`:
 
-    :plugins [[jarohen/lein-frodo "0.1.1"]]
+    :plugins [[jarohen/lein-frodo "0.1.2-SNAPSHOT"]]
 
 ## Why?
 
@@ -50,14 +50,18 @@ classpath, and add a `:frodo/config` key, as follows:
 
 *project-root*/resources/config/nomad-config.edn:
 
-    {:frodo/config {:nrepl {:port 7888}
-                    :web {:port 3000}
-                    :handler myapp.web/handler}}
+```clojure
+{:frodo/config {:nrepl {:port 7888}
+                :web {:port 3000}
+                :handler myapp.web/handler}}
+```
 	 
 Then, add an entry in your `project.clj` to tell Frodo where your
 Nomad file is:
 
-    :frodo/config-resource "config/nomad-config.edn"
+```clojure
+:frodo/config-resource "config/nomad-config.edn"
+```
 
 To run the Ring server, run:
 
@@ -69,13 +73,15 @@ Yes - you can do this in the traditional Nomad way:
 
 *project-root*/resources/config/nomad-config.edn:
 
-    {:nomad/environments {"dev"
-	                      {:frodo/config {:nrepl {:port 7888}
-						                  :web {:port 3000}}}
-						   
-					      "prod"
-	                      {:frodo/config {:nrepl {:port nil}
-						                  :web {:port 4462}}}}}
+```clojure
+{:nomad/environments {"dev"
+	                  {:frodo/config {:nrepl {:port 7888}
+                                      :web {:port 3000}}}
+
+                      "prod"
+                      {:frodo/config {:nrepl {:port nil}
+                                      :web {:port 4462}}}}}
+```										  
 
 Then, start your application with either:
 
@@ -88,6 +94,64 @@ or:
 This is just the simplest multiple environment configuration - there
 are many more possibilities on the [Nomad project page][1].
 
+## ClojureScript REPL
+
+Frodo also allows you to start and connect to a ClojureScript
+REPL. Frodo's CLJS support is a lightweight wrapper around Chas
+Emerick's excellent [Austin](https://github.com/cemerick/austin)
+library.
+
+Setting this up in Frodo is achieved with 4 easy steps:
+
+1. Include `:cljs-repl? true` in your nREPL configuration, as follows:
+
+   ```clojure
+   {:nomad/environments {"dev"
+                         {:frodo/config {:nrepl {:port 7888
+         				                         :cljs-repl? true}
+                                         :web {:port 3000}}}}}
+   ```
+										  
+2. Include a snippet of JS in your web page to connect your browser to
+   the REPL. The
+   `(cemerick.austin.repls/browser-connected-repl-js)` function
+   provides the JS - you just have to include it in the &lt;body&gt;
+   tag.
+   
+   Chas recommends to do this with Hiccup:
+   ```clojure
+   [:script (cemerick.austin.repls/browser-connected-repl-js)]
+   ```
+
+3. Connect to your usual Clojure REPL, and run `(frodo/cljs-repl)` to
+   turn it into a CLJS REPL. (Type `:cljs/quit` to exit back to the
+   Clojure REPL)
+   
+4. Refresh your browser window.
+
+You should then be able to run commands in the CLJS REPL as you would
+do with any other Clojure REPL. A good smoke test is any one of the
+following:
+
+```clojure
+(js/alert "Hello world!")
+(js/console.log "Hello world!")
+(-> js/document .-body (.setAttribute "style" "background:green"))
+```
+
+I have also tested this in Emacs - most of the usual nREPL keybindings
+work fine with CLJS REPLs. The only exception I've found so far (as of
+2013-09-14) is `M-.` and `M-,` - jump to (and back from) a
+declaration.
+
+For more information about Austin and CLJS REPLs in general, Chas has
+written a [great tutorial][1], a [sample project][2] and a
+[screencast][3].
+
+[1]: https://github.com/cemerick/austin/blob/master/README.md
+[2]: https://github.com/cemerick/austin/tree/master/browser-connected-repl-sample
+[3]: http://www.youtube.com/watch?v=a1Bs0pXIVXc&feature=youtu.be
+
 ## Future features?
 
 * **SSL**? I'm not sure how many people use SSL within Ring - from
@@ -98,6 +162,10 @@ are many more possibilities on the [Nomad project page][1].
   care enough to write a patch, it'll be gratefully received!
 
 ## Changes
+
+### 0.1.2
+
+No breaking changes. Added CLJS REPL functionality.
 
 ### 0.1.1
 
@@ -111,8 +179,8 @@ Initial release.
 ## Pull requests/bug reports/feedback etc?
 
 Yes please, much appreciated! Please submit via GitHub in the
-traditional manner. (Or, if it fits into 140 chars,
-tweet [@jarohen](https://twitter.com/jarohen))
+traditional manner. (Or, if it fits into 140 chars, you can tweet
+[@jarohen](https://twitter.com/jarohen))
 
 ## Thanks
 
@@ -120,6 +188,8 @@ tweet [@jarohen](https://twitter.com/jarohen))
   **lein-ring** project (amongst everything else!) from which I have
   plundered a couple of ideas and snippets of code. Also, thanks for the
   general help and advice.
+* Also, thanks to [Chas Emerick](https://github.com/cemerick) for his
+  **Austin** CLJS REPL library.
 
 ## License
 
