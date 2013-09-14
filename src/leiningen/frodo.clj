@@ -54,24 +54,20 @@
          (ring.adapter.jetty/run-jetty (var ~handler) {:port ~web-port :join? false})
          (println "Started web server, port" ~web-port)))))
 
-(defn run-cljs-repl [config]
+(defn cljs-repl-fn [config]
   (when (cljs-repl? config)
     `(do
        (create-ns '~'frodo)
-       (intern '~'frodo '~'reset-cljs-repl!
-               (fn []
-                 (intern '~'frodo '~'repl-env
-                         (reset! cemerick.austin.repls/browser-repl-env
-                                 (cemerick.austin/repl-env)))))
-       (frodo/reset-cljs-repl!)
        (intern '~'frodo '~'cljs-repl
                (fn []
-                 (cemerick.austin.repls/cljs-repl frodo/repl-env))))))
+                 (cemerick.austin.repls/cljs-repl
+                  (reset! cemerick.austin.repls/browser-repl-env
+                          (cemerick.austin/repl-env))))))))
 
 (defn make-form [config]
   `(do
      ~(run-nrepl-form config)
-     ~(run-cljs-repl config)
+     ~(cljs-repl-fn config)
      ~(run-web-form config)))
 
 (defn requires-form [{:keys [handler] :as config}]
