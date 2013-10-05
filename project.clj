@@ -1,4 +1,4 @@
-(defproject jarohen/lein-frodo "0.1.3-SNAPSHOT"
+(defproject jarohen/lein-frodo "0.2.0"
   :description "A Lein plugin to start an HTTP-kit server via configuration in Nomad"
   :url "https://github.com/james-henderson/nomad-ring.git"
   :license {:name "Eclipse Public License"
