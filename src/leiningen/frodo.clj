@@ -41,7 +41,10 @@
 
 (defn run-nrepl-form [config]
   (when-let [nrepl-port (get-in config [:nrepl :port])]
-    `(do 
+    `(do
+       (doto (io/file "target/repl-port")
+         (spit ~nrepl-port)
+         (.deleteOnExit))
        (clojure.tools.nrepl.server/start-server :port ~nrepl-port
                                                 :handler ~(austin-handler-form config))
        (println "Started nREPL server, port" ~nrepl-port))))
