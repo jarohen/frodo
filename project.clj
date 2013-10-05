@@ -1,5 +1,5 @@
-(defproject jarohen/lein-frodo "0.1.2"
-  :description "A plugin to start a Ring server via configuration in Nomad"
+(defproject jarohen/lein-frodo "0.1.3-SNAPSHOT"
+  :description "A Lein plugin to start an HTTP-kit server via configuration in Nomad"
   :url "https://github.com/james-henderson/nomad-ring.git"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}

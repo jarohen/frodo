@@ -27,7 +27,7 @@
 
 (defn add-ring-deps [project config]
   (-> project
-      (deps/add-if-missing '[ring/ring-jetty-adapter "1.2.0"])
+      (deps/add-if-missing '[http-kit "2.1.10"])
       (deps/add-if-missing '[org.clojure/tools.nrepl "0.2.3"])
       
       (cond->
@@ -51,7 +51,7 @@
     (let [handler (get config :handler)]
       (assert handler "Please configure a handler in your Nomad configuration.")
       `(do
-         (ring.adapter.jetty/run-jetty (var ~handler) {:port ~web-port :join? false})
+         (org.httpkit.server/run-server (var ~handler) {:port ~web-port :join? false})
          (println "Started web server, port" ~web-port)))))
 
 (defn cljs-repl-fn [config]
@@ -73,13 +73,12 @@
 (defn requires-form [{:keys [handler] :as config}]
   `(do
      (require 'clojure.tools.nrepl.server)
-     (require 'ring.adapter.jetty)
-     (require (symbol ~(namespace handler)))
-     ~(when (cljs-repl? config)
-        `(do
-           (require 'cemerick.piggieback)
+     (require 'org.httpkit.server)
+     (require '~(symbol (namespace handler)))
+     ~@(when (cljs-repl? config)
+         `[(require 'cemerick.piggieback)
            (require 'cemerick.austin)
-           (require 'cemerick.austin.repls)))))
+           (require 'cemerick.austin.repls)])))
 
 (defn frodo
   [project & args]
