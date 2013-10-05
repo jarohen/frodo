@@ -49,9 +49,21 @@
                                                 :handler ~(austin-handler-form config))
        (println "Started nREPL server, port" ~nrepl-port))))
 
+(defn handler-deprecation-warning! []
+  (binding [*out* *err*]
+    (println (str "WARN: Frodo's :handler now belongs "
+                  "inside the :web map. "
+                  "Please see https://github.com/james-henderson/lein-frodo "
+                  "for more information. "
+                  "The original behaviour will be "
+                  "removed in v0.3.0."))))
+
 (defn run-web-form [config]
   (when-let [web-port (get-in config [:web :port])]
-    (let [handler (get config :handler)]
+    (let [handler (or (get-in config [:web :handler])
+                      (when-let [old-handler (:handler config)]
+                        (handler-deprecation-warning!)
+                        old-handler))]
       (assert handler "Please configure a handler in your Nomad configuration.")
       `(do
          (org.httpkit.server/run-server (var ~handler) {:port ~web-port :join? false})
@@ -73,11 +85,12 @@
      ~(cljs-repl-fn config)
      ~(run-web-form config)))
 
-(defn requires-form [{:keys [handler] :as config}]
+(defn requires-form [config]
   `(do
      (require 'clojure.tools.nrepl.server)
      (require 'org.httpkit.server)
-     (require '~(symbol (namespace handler)))
+     (require '~(symbol (namespace (or (get-in config [:web :handler])
+                                       (:handler config)))))
      ~@(when (cljs-repl? config)
          `[(require 'cemerick.piggieback)
            (require 'cemerick.austin)
