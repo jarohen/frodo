@@ -1,24 +1,28 @@
 # Lein-Frodo
 
-A Leiningen plugin to start a Ring server easily via configuration in
-Nomad, and also to start and connect to a ClojureScript REPL.
+A Leiningen plugin to start a web server (backed by [http-kit][1])
+easily via configuration in Nomad, and also to start and connect to a
+ClojureScript REPL.
+
+[1]:http://http-kit.org/index.html
 
 ## Dependency
 
 Include `lein-frodo` as a plugin in your `project.clj`:
 
-    :plugins [[jarohen/lein-frodo "0.1.2"]]
+    :plugins [[jarohen/lein-frodo "0.2.0"]]
 
 ## Why?
 
 Well, I already use **Nomad** for most of my configuration. I
 configure various environments using Nomad's environment
-functionality, and wanted the Ring server to be configured in the same
+functionality, and wanted the web server to be configured in the same
 way.
 
 In each project, I found myself writing the same boilerplate startup
 code - reading the port details from my configuration in order to
-start nREPL and Ring on the relevant ports for the environment.
+start nREPL and a web server on the relevant ports for the
+environment.
 
 With Frodo, it's possible to start web applications with:
 
@@ -52,8 +56,8 @@ classpath, and add a `:frodo/config` key, as follows:
 
 ```clojure
 {:frodo/config {:nrepl {:port 7888}
-                :web {:port 3000}
-                :handler myapp.web/handler}}
+                :web {:port 3000
+                      :handler myapp.web/handler}}}
 ```
 	 
 Then, add an entry in your `project.clj` to tell Frodo where your
@@ -81,7 +85,7 @@ Yes - you can do this in the traditional Nomad way:
                       "prod"
                       {:frodo/config {:nrepl {:port nil}
                                       :web {:port 4462}}}}}
-```										  
+```										
 
 Then, start your application with either:
 
@@ -154,7 +158,7 @@ written a [great tutorial][1], a [sample project][2] and a
 
 ## Future features?
 
-* **SSL**? I'm not sure how many people use SSL within Ring - from
+* **SSL**? I'm not sure how many people use SSL within Clojure - from
   what I can tell most people sit it behind an nginx/httpd proxy. If
   you want to include SSL support, please feel free to submit a pull
   request.
@@ -162,6 +166,19 @@ written a [great tutorial][1], a [sample project][2] and a
   care enough to write a patch, it'll be gratefully received!
 
 ## Changes
+
+### 0.2.0
+
+No breaking changes. Frodo now uses [**http-kit**][1] to provide the
+web server. http-kit is compatible with ring and ring-jetty, so you
+shouldn't have any trouble.
+
+The `:handler` key has been moved inside the `:web` map in the config
+file. The original location still works, but it has been deprecated,
+and will be removed in 0.3.0.
+
+Also, the nREPL port is now saved to `target/repl-port` to be
+consistent with `lein repl`.
 
 ### 0.1.2
 
