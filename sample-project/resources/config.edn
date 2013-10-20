@@ -1,3 +1,0 @@
-{:frodo/config {:nrepl {:port 7889}
-                :web {:port 3000
-                      :handler sample-project.web/handler}}}
