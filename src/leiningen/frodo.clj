@@ -31,8 +31,7 @@
       (deps/add-if-missing '[org.clojure/tools.nrepl "0.2.3"])
       
       (cond->
-       (cljs-repl? config)
-       (deps/add-if-missing '[com.cemerick/austin "0.1.1"]))))
+          (cljs-repl? config) (deps/add-if-missing '[com.cemerick/austin "0.1.1"]))))
 
 (defn austin-handler-form [config]
   (when (cljs-repl? config)
@@ -69,37 +68,33 @@
          (org.httpkit.server/run-server (var ~handler) {:port ~web-port :join? false})
          (println "Started web server, port" ~web-port)))))
 
-(defn cljs-repl-fn [config]
-  (when (cljs-repl? config)
-    `(do
-       (create-ns '~'frodo)
-       (intern '~'frodo '~'cljs-repl
-               (fn []
-                 (cemerick.austin.repls/cljs-repl
-                  (reset! cemerick.austin.repls/browser-repl-env
-                          (cemerick.austin/repl-env))))))))
-
 (defn make-form [config]
   `(do
      ~(run-nrepl-form config)
-     ~(cljs-repl-fn config)
      ~(run-web-form config)))
 
 (defn requires-form [config]
   `(do
      (require 'clojure.tools.nrepl.server)
      (require 'org.httpkit.server)
-     (require '~(symbol (namespace (or (get-in config [:web :handler])
-                                       (:handler config)))))
      ~@(when (cljs-repl? config)
          `[(require 'cemerick.piggieback)
            (require 'cemerick.austin)
-           (require 'cemerick.austin.repls)])))
+           (require 'cemerick.austin.repls)])
+     
+     (require '~(symbol (namespace (or (get-in config [:web :handler])
+                                       (:handler config)))))))
+
+(defn copy-frodo-ns! [project]
+  (let [frodo-clj-path (.getAbsolutePath (io/file (:target-path project) "classes" "frodo.clj"))]
+    (clojure.java.io/copy (slurp (io/resource "frodo.clj"))
+                          (clojure.java.io/file frodo-clj-path))))
 
 (defn frodo
   [project & args]
   (let [nomad-file (get-nomad-file project)
         nomad-config (load-nomad-config nomad-file)]
+    (copy-frodo-ns! project)
     (eval-in-project (add-ring-deps project nomad-config)
                      (make-form nomad-config)
                      (requires-form nomad-config))))
