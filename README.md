@@ -135,11 +135,11 @@ Setting this up in Frodo is achieved with 4 easy steps:
    you can leave this in even when the CLJS REPL is disabled - e.g. in
    production)
 
-3. Connect to your usual Clojure REPL, and run `(frodo/cljs-repl)` to
-   turn it into a CLJS REPL. (Type `:cljs/quit` to exit back to the
-   Clojure REPL)
+3. Connect to your usual Clojure REPL, and run `(require 'frodo)`,
+   then `(frodo/cljs-repl)` to turn it into a CLJS REPL. (Type
+   `:cljs/quit` to exit back to the Clojure REPL)
    
-4. Refresh your browser window. 
+4. Refresh your browser window to connect it to your REPL.
 
 You should then be able to run commands in the CLJS REPL as you would
 do with any other Clojure REPL. A good smoke test is any one of the
