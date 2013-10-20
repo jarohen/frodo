@@ -125,9 +125,7 @@ Setting this up in Frodo is achieved with 4 easy steps:
    You can do this with Hiccup:
    ```clojure
    (:require [frodo :refer [repl-connect-js])
-   
    ...
-   
    [:script (repl-connect-js)]
    ```
 
