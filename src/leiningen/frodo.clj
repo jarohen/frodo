@@ -86,7 +86,9 @@
                                        (:handler config)))))))
 
 (defn copy-frodo-ns! [project]
-  (let [frodo-clj-path (.getAbsolutePath (io/file (:target-path project) "classes" "frodo.clj"))]
+  (let [frodo-clj-path (-> (io/file (:target-path project) "classes" "frodo.clj")
+                           (doto (io/make-parents))
+                           (.getAbsolutePath))]
     (clojure.java.io/copy (slurp (io/resource "frodo.clj"))
                           (clojure.java.io/file frodo-clj-path))))
 
