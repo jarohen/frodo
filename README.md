@@ -10,7 +10,7 @@ ClojureScript REPL.
 
 Include `lein-frodo` as a plugin in your `project.clj`:
 
-    :plugins [[jarohen/lein-frodo "0.2.0"]]
+    :plugins [[jarohen/lein-frodo "0.2.1-SNAPSHOT"]]
 
 ## Why?
 
@@ -118,20 +118,28 @@ Setting this up in Frodo is achieved with 4 easy steps:
 										  
 2. Include a snippet of JS in your web page to connect your browser to
    the REPL. The
-   `(cemerick.austin.repls/browser-connected-repl-js)` function
+   `(frodo/repl-connect-js)` function
    provides the JS - you just have to include it in the &lt;body&gt;
    tag.
    
-   Chas recommends to do this with Hiccup:
+   You can do this with Hiccup:
    ```clojure
-   [:script (cemerick.austin.repls/browser-connected-repl-js)]
+   (:require [frodo :refer [repl-connect-js])
+   
+   ...
+   
+   [:script (repl-connect-js)]
    ```
+
+   (If the CLJS REPL is disabled, `repl-connect-js` returns `nil`, so
+   you can leave this in even when the CLJS REPL is disabled - e.g. in
+   production)
 
 3. Connect to your usual Clojure REPL, and run `(frodo/cljs-repl)` to
    turn it into a CLJS REPL. (Type `:cljs/quit` to exit back to the
    Clojure REPL)
    
-4. Refresh your browser window.
+4. Refresh your browser window. 
 
 You should then be able to run commands in the CLJS REPL as you would
 do with any other Clojure REPL. A good smoke test is any one of the
@@ -166,6 +174,13 @@ written a [great tutorial][1], a [sample project][2] and a
   care enough to write a patch, it'll be gratefully received!
 
 ## Changes
+
+### 0.2.1
+
+Fixed a bug whereby requiring `cemerick.austin.repls` when it wasn't
+linked threw exceptions. Now use `(frodo/repl-connect-js)` which will
+work if CLJS REPLs are turned on but won't error if they're turned off
+(e.g. in prod)
 
 ### 0.2.0
 
