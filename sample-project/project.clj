@@ -13,11 +13,11 @@
 
                  [prismatic/dommy "0.1.1"]
 
-                 [org.clojure/clojurescript "0.0-1913"]
-                 [org.clojure/tools.reader "0.7.8"]]
+                 [org.clojure/clojurescript "0.0-2014"]
+                 [org.clojure/tools.reader "0.7.10"]]
 
-  :plugins [[jarohen/lein-frodo "0.2.1"]
-            [lein-cljsbuild "0.3.3"]
+  :plugins [[jarohen/lein-frodo "0.2.3"]
+            [lein-cljsbuild "1.0.0-alpha2"]
             [lein-pdo "0.1.1"]]
 
   :frodo/config-resource "sample-project-config.edn"

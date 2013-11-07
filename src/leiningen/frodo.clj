@@ -27,11 +27,11 @@
 
 (defn add-ring-deps [project config]
   (-> project
-      (deps/add-if-missing '[http-kit "2.1.10"])
+      (deps/add-if-missing '[http-kit "2.1.12"])
       (deps/add-if-missing '[org.clojure/tools.nrepl "0.2.3"])
       
       (cond->
-          (cljs-repl? config) (deps/add-if-missing '[com.cemerick/austin "0.1.1"]))))
+          (cljs-repl? config) (deps/add-if-missing '[com.cemerick/austin "0.1.3"]))))
 
 (defn austin-handler-form [config]
   (when (cljs-repl? config)
