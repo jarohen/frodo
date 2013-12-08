@@ -10,7 +10,7 @@ ClojureScript REPL.
 
 Include `lein-frodo` as a plugin in your `project.clj`:
 
-    :plugins [[jarohen/lein-frodo "0.2.3"]]
+    :plugins [[jarohen/lein-frodo "0.2.4"]]
 
 ## Why?
 
@@ -162,6 +162,16 @@ written a [great tutorial][1], a [sample project][2] and a
 [2]: https://github.com/cemerick/austin/tree/master/browser-connected-repl-sample
 [3]: http://www.youtube.com/watch?v=a1Bs0pXIVXc&feature=youtu.be
 
+## CLJX support
+
+As of 0.2.4, Frodo transparently supports
+[CLJX](https://github.com/lynaghk/cljx) - if you have a `:cljx` key in
+your `project.clj`, Frodo will ensure the necessary middleware is in
+place.
+
+See [CLJX](https://github.com/lynaghk/cljx)'s project page for more
+details on how to use it.
+
 ## Future features?
 
 * **SSL**? I'm not sure how many people use SSL within Clojure - from
@@ -172,6 +182,10 @@ written a [great tutorial][1], a [sample project][2] and a
   care enough to write a patch, it'll be gratefully received!
 
 ## Changes
+
+### 0.2.4
+
+No breaking changes - CLJX support
 
 ### 0.2.3
 
