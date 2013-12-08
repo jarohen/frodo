@@ -30,22 +30,23 @@
       (deps/add-if-missing '[http-kit "2.1.12"])
       (deps/add-if-missing '[org.clojure/tools.nrepl "0.2.3"])
       
-      (cond->
-          (cljs-repl? config) (deps/add-if-missing '[com.cemerick/austin "0.1.3"]))))
+      (cond-> (cljs-repl? config) (deps/add-if-missing '[com.cemerick/austin "0.1.3"]))))
 
-(defn austin-handler-form [config]
-  (when (cljs-repl? config)
-    `(clojure.tools.nrepl.server/default-handler
-       #'cemerick.piggieback/wrap-cljs-repl)))
+(defn repl-handler-form [project config]
+  `(clojure.tools.nrepl.server/default-handler
+     ~@(concat (when (:cljx project)
+                 `[#'cljx.repl-middleware/wrap-cljx])
+               (when (cljs-repl? config)
+                 `[#'cemerick.piggieback/wrap-cljs-repl]))))
 
-(defn run-nrepl-form [config]
+(defn run-nrepl-form [project config]
   (when-let [nrepl-port (get-in config [:nrepl :port])]
     `(do
        (doto (io/file "target/repl-port")
          (spit ~nrepl-port)
          (.deleteOnExit))
        (clojure.tools.nrepl.server/start-server :port ~nrepl-port
-                                                :handler ~(austin-handler-form config))
+                                                :handler ~(repl-handler-form project config))
        (println "Started nREPL server, port" ~nrepl-port))))
 
 (defn handler-deprecation-warning! []
@@ -68,12 +69,12 @@
          (org.httpkit.server/run-server (var ~handler) {:port ~web-port :join? false})
          (println "Started web server, port" ~web-port)))))
 
-(defn make-form [config]
+(defn make-form [project config]
   `(do
-     ~(run-nrepl-form config)
+     ~(run-nrepl-form project config)
      ~(run-web-form config)))
 
-(defn requires-form [config]
+(defn requires-form [project config]
   `(do
      (require 'clojure.tools.nrepl.server)
      (require 'org.httpkit.server)
@@ -81,6 +82,9 @@
          `[(require 'cemerick.piggieback)
            (require 'cemerick.austin)
            (require 'cemerick.austin.repls)])
+
+     ~@(when (:cljx project)
+         `[(require 'cljx.repl-middleware)])
      
      (require '~(symbol (namespace (or (get-in config [:web :handler])
                                        (:handler config)))))))
@@ -97,6 +101,7 @@
   (let [nomad-file (get-nomad-file project)
         nomad-config (load-nomad-config nomad-file)]
     (copy-frodo-ns! project)
+    (println "Hello!")
     (eval-in-project (add-ring-deps project nomad-config)
-                     (make-form nomad-config)
-                     (requires-form nomad-config))))
+                     (make-form project nomad-config)
+                     (requires-form project nomad-config))))
