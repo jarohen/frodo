@@ -242,6 +242,8 @@ traditional manner. (Or, if it fits into 140 chars, you can tweet
   general help and advice.
 * Also, thanks to [Chas Emerick](https://github.com/cemerick) for his
   **Austin** CLJS REPL library.
+* Thanks to [Kevin Lynagh](https://github.com/lynaghk) for his
+  **CLJX** CLJ/CLJS crossovers library
 
 ## License
 
