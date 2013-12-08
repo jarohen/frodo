@@ -101,7 +101,6 @@
   (let [nomad-file (get-nomad-file project)
         nomad-config (load-nomad-config nomad-file)]
     (copy-frodo-ns! project)
-    (println "Hello!")
     (eval-in-project (add-ring-deps project nomad-config)
                      (make-form project nomad-config)
                      (requires-form project nomad-config))))
