@@ -1,7 +1,5 @@
 (ns ^{:clojure.tools.namespace.repl/load false} frodo.web
-    (:require [frodo.nrepl :refer [start-nrepl!]]
-              [frodo.web :refer [init-web!]]
-              [clojure.tools.namespace.repl :refer [refresh]]
+    (:require [clojure.tools.namespace.repl :refer [refresh]]
               [clojure.string :as s]
               [org.httpkit.server :refer [run-server] :rename {run-server start-httpkit!}]))
 
