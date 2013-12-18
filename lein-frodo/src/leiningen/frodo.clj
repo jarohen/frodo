@@ -7,7 +7,6 @@
             [nomad :refer [defconfig]])
   (:import [java.net URL URLClassLoader]))
 
-
 (defn get-nomad-file [{:keys [source-paths resource-paths root] :as project}]
   (let [paths (->> (concat source-paths resource-paths)
                    (map io/file)
@@ -29,7 +28,8 @@
   (-> project
       (deps/add-if-missing '[http-kit "2.1.12"])
       (deps/add-if-missing '[org.clojure/tools.nrepl "0.2.3"])
-      
+      (deps/add-if-missing '[org.clojure/tools.namespace "0.2.4"])
+
       (cond-> (cljs-repl? config) (deps/add-if-missing '[com.cemerick/austin "0.1.3"]))))
 
 (defn repl-handler-form [project config]
@@ -60,14 +60,22 @@
 
 (defn run-web-form [config]
   (when-let [web-port (get-in config [:web :port])]
-    (let [handler (or (get-in config [:web :handler])
-                      (when-let [old-handler (:handler config)]
-                        (handler-deprecation-warning!)
-                        old-handler))]
-      (assert handler "Please configure a handler in your Nomad configuration.")
-      `(do
-         (org.httpkit.server/run-server (var ~handler) {:port ~web-port :join? false})
-         (println "Started web server, port" ~web-port)))))
+    (let [handler-fn (or (get-in config [:web :handler-fn])
+                         (when-let [handler (or (get-in config [:web :handler])
+                                                (when-let [old-handler (:handler config)]
+                                                  (handler-deprecation-warning!)
+                                                  old-handler))]
+                           `(fn [] (ns-resolve *ns* '~handler))))]
+      (assert handler-fn "Please configure a handler in your Nomad configuration.")
+      (doto `(do
+               (binding [*ns* (create-ns '~'user)]
+                 (refer '~'frodo.server :only '~'[start-frodo! stop-frodo! reload-frodo!]))
+
+               (intern (create-ns '~'frodo.server) '~'handler-fn ~handler-fn)
+               (intern (create-ns '~'frodo.server) '~'web-port ~web-port)
+
+               (frodo.server/start-frodo!))
+        prn))))
 
 (defn make-form [project config]
   `(do
@@ -77,7 +85,7 @@
 (defn requires-form [project config]
   `(do
      (require 'clojure.tools.nrepl.server)
-     (require 'org.httpkit.server)
+     (require 'frodo.server)
      ~@(when (cljs-repl? config)
          `[(require 'cemerick.piggieback)
            (require 'cemerick.austin)
@@ -86,21 +94,26 @@
      ~@(when (:cljx project)
          `[(require 'cljx.repl-middleware)])
      
-     (require '~(symbol (namespace (or (get-in config [:web :handler])
+     (require '~(symbol (namespace (or (get-in config [:web :handler-fn])
+                                       (get-in config [:web :handler])
                                        (:handler config)))))))
 
-(defn copy-frodo-ns! [project]
-  (let [frodo-clj-path (-> (io/file (:target-path project) "classes" "frodo.clj")
-                           (doto (io/make-parents))
-                           (.getAbsolutePath))]
-    (clojure.java.io/copy (slurp (io/resource "frodo.clj"))
-                          (clojure.java.io/file frodo-clj-path))))
+(defn copy-to-classpath [project file path]
+  (let [classpath-file-path (doto (-> (io/file (:target-path project) "classes" path)
+                                      (.getAbsolutePath))
+                              (io/make-parents))]
+    (clojure.java.io/copy (slurp file)
+                          (clojure.java.io/file classpath-file-path))))
+
+(defn copy-frodo-nses! [project]
+  (copy-to-classpath project (io/resource "frodo.clj") "frodo.clj")
+  (copy-to-classpath project (io/resource "frodo/server.clj") "frodo/server.clj"))
 
 (defn frodo
   [project & args]
   (let [nomad-file (get-nomad-file project)
         nomad-config (load-nomad-config nomad-file)]
-    (copy-frodo-ns! project)
+    (copy-frodo-nses! project)
     (eval-in-project (add-ring-deps project nomad-config)
                      (make-form project nomad-config)
                      (requires-form project nomad-config))))
