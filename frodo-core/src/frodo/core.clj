@@ -5,7 +5,6 @@
 
 (defn init-frodo! [config-resource & [{:keys [cljx? target-path] :as nrepl-opts}]]
   (defconfig ^:private _config config-resource)
-  (prn (_config))
   (start-nrepl! (_config) nrepl-opts)
 
   (init-web! _config))
