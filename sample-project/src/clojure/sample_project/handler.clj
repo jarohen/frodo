@@ -29,5 +29,5 @@
     (resources "/js" {:root "js"})))
 
 (defn app [] 
-  (-> app-routes
+  (-> (app-routes (java.util.Date.))
       api))
