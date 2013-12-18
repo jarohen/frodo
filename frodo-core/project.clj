@@ -7,5 +7,6 @@
                  [http-kit "2.1.13"]
                  [org.clojure/tools.nrepl "0.2.3"]
                  [org.clojure/tools.namespace "0.2.4"]
+                 [alembic "0.2.0"]
                  
                  [jarohen/nomad "0.6.0"]])

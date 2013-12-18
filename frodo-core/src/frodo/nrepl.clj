@@ -1,27 +1,33 @@
 (ns ^{:clojure.tools.namespace.repl/load false} frodo.nrepl
-  (:require [clojure.tools.nrepl.server :refer [start-server]]))
+    (:require [clojure.tools.nrepl.server :as nrepl]
+              [clojure.java.io :as io]
+              [alembic.still :as a]))
 
-(comment
-  (defn cljs-repl? [config]
-    (boolean (get-in config [:nrepl :cljs-repl?])))
+(defn- load-cljx! []
+  (with-out-str
+    (a/distill '[[com.keminglabs/cljx "0.3.1"]])
+    (require 'cljx.repl-middleware)))
 
-  (defn repl-handler-form [project config]
-    `(clojure.tools.nrepl.server/default-handler
-       ~@(concat (when (:cljx project)
-                   `[#'cljx.repl-middleware/wrap-cljx])
-                 (when (cljs-repl? config)
-                   `[#'cemerick.piggieback/wrap-cljs-repl]))))
+(defn- load-cljs-repl! []
+  (with-out-str
+    (a/distill '[[com.cemerick/austin "0.1.3"]])
+    (require 'cemerick.piggieback)))
 
-  (defn run-nrepl-form [project config]
-    (when-let [nrepl-port (get-in config [:nrepl :port])]
-      `(do
-         (doto (io/file "target/repl-port")
-           (spit ~nrepl-port)
-           (.deleteOnExit))
-         (clojure.tools.nrepl.server/start-server :port ~nrepl-port
-                                                  :handler ~(repl-handler-form project config))
-         (println "Started nREPL server, port" ~nrepl-port)))))
+(defn- repl-handler [config cljx?]
+  (apply nrepl/default-handler 
+         (concat (when cljx?
+                   (load-cljx!)
+                   (eval `[cljx.repl-middleware/wrap-cljx]))
+                 (when (get-in config [:frodo/config :nrepl :cljs-repl?])
+                   (load-cljs-repl!)
+                   (eval `[cemerick.piggieback/wrap-cljs-repl])))))
 
 (defn start-nrepl! [config & [{:keys [cljx? target-path]}]]
-  )
+  (when-let [nrepl-port (get-in config [:frodo/config :nrepl :port])]
+    (doto (io/file target-path "repl-port")
+      (spit nrepl-port)
+      (.deleteOnExit))
+    
+    (nrepl/start-server :port nrepl-port :handler (repl-handler config cljx?))
+    (println "Started nREPL server, port" nrepl-port)))
 

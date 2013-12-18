@@ -15,5 +15,7 @@
   [project & args]
   (let [nomad-resource (:frodo/config-resource project)]
     (eval-in-project (add-core-dep project)
-                     `(#'frodo.core/init-frodo! (clojure.java.io/resource ~nomad-resource))
+                     `(#'frodo.core/init-frodo! (clojure.java.io/resource ~nomad-resource)
+                                                {:cljx? ~(boolean (:cljx project))
+                                                 :target-path ~(:target-path project)})
                      `(require '~'frodo.core))))
