@@ -34,12 +34,14 @@
      :web-port web-port}))
 
 (defn- start-web-server! [!server config]
-  (let [{:keys [handler web-port]} (read-web-config config)
-        _ (println "Starting web server, port" web-port)
-        server (start-httpkit! handler {:port web-port :join? false})]
-    (dosync
-     (ref-set !server server)
-     nil)))
+  (let [{:keys [handler web-port]} (read-web-config config)]
+    (refresh)
+    (println "Starting web server, port" web-port)
+
+    (let [server (start-httpkit! handler {:port web-port :join? false})]
+      (dosync
+       (ref-set !server server)
+       nil))))
 
 (defn- stop-web-server! [!server]
   (when-let [server (dosync
@@ -53,7 +55,6 @@
 
 (defn- reload-web-server! [!server config]
   (stop-web-server! !server)
-  (refresh)
   (start-web-server! !server config))
 
 (defn init-web! [_config]
