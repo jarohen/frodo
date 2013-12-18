@@ -17,10 +17,10 @@
   (apply nrepl/default-handler 
          (concat (when cljx?
                    (load-cljx!)
-                   (eval `[cljx.repl-middleware/wrap-cljx]))
+                   (eval `[#'cljx.repl-middleware/wrap-cljx]))
                  (when (get-in config [:frodo/config :nrepl :cljs-repl?])
                    (load-cljs-repl!)
-                   (eval `[cemerick.piggieback/wrap-cljs-repl])))))
+                   (eval `[#'cemerick.piggieback/wrap-cljs-repl])))))
 
 (defn start-nrepl! [config & [{:keys [cljx? target-path]}]]
   (when-let [nrepl-port (get-in config [:frodo/config :nrepl :port])]
