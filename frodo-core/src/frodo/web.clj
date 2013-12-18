@@ -59,7 +59,7 @@
 (defn init-web! [_config]
   (let [!server (ref nil)]
     (intern 'user 'start-frodo! #(start-web-server! !server (_config)))
-    (intern 'user 'stop-frodo! #(stop-web-server! !server (_config)))
+    (intern 'user 'stop-frodo! #(stop-web-server! !server))
     (intern 'user 'reload-frodo! #(reload-web-server! !server (_config)))
 
     (start-web-server! !server (_config))))
