@@ -11,7 +11,8 @@
 (defn- load-cljs-repl! []
   (with-out-str
     (a/distill '[[com.cemerick/austin "0.1.3"]])
-    (require 'cemerick.piggieback)))
+    (require 'cemerick.piggieback)
+    (require 'cemerick.austin.repls)))
 
 (defn- repl-handler [config cljx?]
   (apply nrepl/default-handler 
