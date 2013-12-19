@@ -12,6 +12,10 @@ Include =lein-frodo= as a plugin in your =project.clj=:
   :plugins [[jarohen/lein-frodo "0.2.5"]]
 #+END_SRC
 
+** Changes
+
+Now moved to [[https://github.com/james-henderson/frodo/tree/master/CHANGES.org][CHANGES.org]].
+
 ** Why?
 
 Well, I already use *Nomad* for most of my configuration. I
@@ -176,57 +180,6 @@ See [[https://github.com/lynaghk/cljx][CLJX]]'s project page for more details on
 - *uberjar/uberwar*? Again, I don't use these, but if you do and you
   care enough to write a patch, it'll be gratefully received!
   
-** Changes
-
-*** 0.2.5
-
-Left in a cheeky println on startup - removed.
-
-*** 0.2.4
-
-No breaking changes - CLJX support
-
-*** 0.2.3
-
-Upstream dependency updates.
-
-*** 0.2.2
-
-Minor bugfix - creating 'target/classes' directory if it doesn't exist
-
-*** 0.2.1
-
-Fixed a bug whereby requiring =cemerick.austin.repls= when it wasn't
-linked threw exceptions. Now use =(frodo/repl-connect-js)= which will
-work if CLJS REPLs are turned on but won't error if they're turned off
-(e.g. in prod)
-
-*** 0.2.0
-
-No breaking changes. Frodo now uses [[http://httpkit.org][http-kit]] to provide the
-web server. http-kit is compatible with ring and ring-jetty, so you
-shouldn't have any trouble.
-
-The =:handler= key has been moved inside the =:web= map in the config
-file. The original location still works, but it has been deprecated,
-and will be removed in 0.3.0.
-
-Also, the nREPL port is now saved to =target/repl-port= to be
-consistent with =lein repl=.
-
-*** 0.1.2
-
-No breaking changes. Added CLJS REPL functionality.
-
-*** 0.1.1
-
-No breaking changes. Better error handling if the user doesn't specify
-a handler.
-
-*** 0.1.0
-
-Initial release.
-
 ** Pull requests/bug reports/feedback etc?
 
 Yes please, much appreciated! Please submit via GitHub in the
