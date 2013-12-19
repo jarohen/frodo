@@ -167,6 +167,17 @@ into
         ...))
 #+END_SRC
 
+Then, from your REPL:
+
+#+BEGIN_SRC clojure
+  user> (reload-frodo!)
+  
+  ;; Stopping web server.
+  ;; :reloading (tetris.multiplayer tetris.handler)
+  ;; Starting web server, port 3000
+  ;; => nil
+#+END_SRC
+
 ** ClojureScript REPL
 
 Frodo also allows you to start and connect to a ClojureScript
