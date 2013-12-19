@@ -264,6 +264,8 @@ traditional manner. (Or, if it fits into 140 chars, you can tweet
   snippets of code. Also, thanks for the general help and advice.
 - Also, thanks to [[https://github.com/cemerick][Chas Emerick]] for his *Austin* CLJS REPL library.
 - Thanks to [[https://github.com/lynaghk][Kevin Lynagh]] for his *CLJX* CLJ/CLJS crossovers library
+- Thanks to [[https://github.com/stuartsierra][Stuart Sierra]] for writing up his '[[http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded][Reloaded]]' workflow - a
+  great way of thinking about server-side state in Clojure
   
 ** License
 
