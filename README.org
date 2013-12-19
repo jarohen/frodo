@@ -157,7 +157,7 @@ following:
 
 I have also tested this in Emacs - most of the usual nREPL keybindings
 work fine with CLJS REPLs. The only exception I've found so far (as of
-2013-09-14) is =M-.= and =M-,= - jump to (and back from) a
+2013-09-14) is =M-period= and =M-comma= - jump to (and back from) a
 declaration.
 
 For more information about Austin and CLJS REPLs in general, Chas has
