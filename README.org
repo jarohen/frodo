@@ -134,9 +134,9 @@ Essentially:
 - Make sure that the function you've referenced in the =:handler-fn=
   key is a zero-arg function that sets up your system state and
   returns a Ring handler.
-- Ensure that your code doesn't contain any =def=s or =defonce=s (and
-  preferably no =defroutes=s - replace these with =(defn my-routes []
-  (routes ...))=) so that all the state can be reloaded.
+- Ensure that your code doesn't contain any =def='s or =defonce='s
+  (and preferably no =defroutes='s - replace these with =(defn
+  my-routes [] (routes ...))=) so that all the state can be reloaded.
 - Call =(reload-frodo!)= from the =user= namespace to throw out the
   old state and start afresh. This will stop the web server, refresh
   any changed code files, and restart the web server, without
