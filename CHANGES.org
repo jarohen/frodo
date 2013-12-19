@@ -1,4 +1,17 @@
 * Changes
+** 0.2.6
+
+Incorporating [[https://github.com/stuartsierra][Stuart Sierra]]'s '[[http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded][Reloaded]]' workflow - call
+=(reload-frodo!)= from the REPL to reload the web server.
+
+This is quite a big re-architect - splitting out into a *frodo-core*
+library and a minimal *lein-frodo* plugin. Hopefully this has made the
+whole codebase a lot simpler!
+
+*Deprecated*: =:handler= in config - replace with =:handler-fn= and
+ensure the referenced function is a zero-arg function returning a web
+handler. Behaviour to be removed in 0.3.0. Existing behaviour will
+work (for now) but you'll get a deprecation warning.
 
 ** 0.2.5
 
