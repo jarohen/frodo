@@ -9,19 +9,25 @@ ClojureScript REPL.
 Include =lein-frodo= as a plugin in your =project.clj=:
 
 #+BEGIN_SRC clojure
-  :plugins [[jarohen/lein-frodo "0.2.5"]]
+  :plugins [[jarohen/lein-frodo "0.2.6-SNAPSHOT"]]
 #+END_SRC
 
 ** Changes
 
 Now moved to [[https://github.com/james-henderson/frodo/tree/master/CHANGES.org][CHANGES.org]].
 
+** Benefits
+
+- Easy setup of a web server that you can nREPL into
+- Easy setup of a ClojureScript browser REPL
+- Easy integration with Stuart Sierra's ([[https://github.com/stuartsierra][@stuartsierra]]) [[http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded]['Reloaded']]
+  workflow
+
 ** Why?
 
-Well, I already use *Nomad* for most of my configuration. I
-configure various environments using Nomad's environment
-functionality, and wanted the web server to be configured in the same
-way.
+Well, I already use *Nomad* for most of my configuration. I configure
+various environments using Nomad's environment functionality, and
+wanted the web server to be configured in the same way.
 
 In each project, I found myself writing the same boilerplate startup
 code - reading the port details from my configuration in order to
@@ -60,8 +66,16 @@ and add a =:frodo/config= key, as follows:
   
   {:frodo/config {:nrepl {:port 7888}
                   :web {:port 3000
-                        :handler myapp.web/handler}}}
+                        :handler-fn myapp.web/make-handler}}}
 #+END_SRC
+
+The function referenced by =:handler-fn= should accept zero args, and
+return a Ring handler. This function is called when you call
+=(reload-frodo!)=, so this is the place to set up your system's state,
+in line with the [[http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded]['Reloaded']] workflow (more details below).
+
+(The original =:handler= entry is now deprecated, and will be removed
+in 0.3.0)
 
 Then, add an entry in your =project.clj= to tell Frodo where your
 Nomad file is:
@@ -106,6 +120,52 @@ or:
 
 This is just the simplest multiple environment configuration - there
 are many more possibilities on the [[https://github.com/james-henderson/nomad][Nomad project page]].
+
+** Frodo, Reloaded.
+
+As of 0.2.6, you can develop web-apps in Frodo using Stuart Sierra's
+[[http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded]['Reloaded']] workflow. I won't go into huge detail about the pattern
+itself (his blog is very informative and plenty else has been written
+about the benefits!) but I do find it a great way to get a 'fresh'
+state without having to restart the JVM.
+
+Essentially:
+
+- Make sure that the function you've referenced in the =:handler-fn=
+  key is a zero-arg function that sets up your system state and
+  returns a Ring handler.
+- Ensure that your code doesn't contain any =def=s or =defonce=s (and
+  preferably no =defroutes=s - replace these with =(defn my-routes []
+  (routes ...))=) so that all the state can be reloaded.
+- Call =(reload-frodo!)= from the =user= namespace to throw out the
+  old state and start afresh. This will stop the web server, refresh
+  any changed code files, and restart the web server, without
+  restarting the JVM. This typically takes less than a second.
+
+As a simple migration from <0.2.6, you can rename =:handler= to
+=:handler-fn= in your Frodo config, and turn:
+
+#+BEGIN_SRC clojure
+  (defroutes app-routes
+    ...)
+  
+  (def your-handler
+    (-> app-routes
+        ...))
+#+END_SRC
+
+into
+
+#+BEGIN_SRC clojure
+  (defn app-routes []
+    (let [system (new-system)]
+      (routes
+        ...)))
+  
+  (defn your-handler []
+    (-> (app-routes)
+        ...))
+#+END_SRC
 
 ** ClojureScript REPL
 
