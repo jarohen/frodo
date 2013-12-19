@@ -22,6 +22,8 @@ Now moved to [[https://github.com/james-henderson/frodo/tree/master/CHANGES.org]
 - Easy setup of a ClojureScript browser REPL
 - Easy integration with Stuart Sierra's ([[https://github.com/stuartsierra][@stuartsierra]]) [[http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded]['Reloaded']]
   workflow
+- Ability to open up an nREPL even if you have compiler errors - you
+  can use the REPL to find them without restarting the JVM each time
 
 ** Why?
 
