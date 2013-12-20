@@ -16,7 +16,7 @@
                  [org.clojure/clojurescript "0.0-2120"]
                  [org.clojure/tools.reader "0.8.0"]]
 
-  :plugins [[jarohen/lein-frodo "0.2.6-SNAPSHOT"]
+  :plugins [[jarohen/lein-frodo "0.2.9"]
             [lein-cljsbuild "1.0.0-alpha2"]
             [lein-pdo "0.1.1"]]
 
