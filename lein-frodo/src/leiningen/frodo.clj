@@ -9,7 +9,7 @@
 
 (defn add-core-dep [project]
   (-> project
-      (deps/add-if-missing '[jarohen/frodo-core "0.2.6-SNAPSHOT"])))
+      (deps/add-if-missing `[jarohen/frodo-core ~(slurp (io/resource "FRODO-VERSION"))])))
 
 (defn server
   "Starts the Frodo application, as per the configuration file specified in project.clj.

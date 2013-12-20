@@ -1,4 +1,4 @@
-(defproject jarohen/frodo-core "0.2.6-SNAPSHOT"
+(defproject jarohen/frodo-core (slurp (clojure.java.io/file "../common/FRODO-VERSION"))
   :description "A Lein plugin to start an HTTP-kit server via configuration in Nomad"
   :url "https://github.com/james-henderson/frodo.git"
   :license {:name "Eclipse Public License"
