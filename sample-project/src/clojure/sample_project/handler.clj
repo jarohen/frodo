@@ -1,12 +1,12 @@
 (ns sample-project.handler
   (:require [ring.util.response :refer [response]]
-            [compojure.core :refer [defroutes GET]]
+            [compojure.core :refer [defroutes GET routes]]
             [compojure.route :refer [resources]]
             [compojure.handler :refer [api]]
             [hiccup.page :refer [html5 include-css include-js]]
             [frodo :refer [repl-connect-js]]))
 
-(defn page-frame []
+(defn page-frame [started-time]
   (html5
    [:head
     [:title "sample-project - CLJS Single Page Web Application"]
@@ -17,13 +17,15 @@
     (include-js "/js/sample-project.js")]
    [:body
     [:div.container
+     [:span "Started at " (str started-time)]
      [:div#content]]
     [:script (repl-connect-js)]]))
 
-(defroutes app-routes
-  (GET "/" [] (response (page-frame)))
-  (resources "/js" {:root "js"}))
+(defn app-routes [started-time]
+  (routes
+    (GET "/" [] (response (page-frame started-time)))
+    (resources "/js" {:root "js"})))
 
-(def app 
-  (-> app-routes
+(defn app [] 
+  (-> (app-routes (java.util.Date.))
       api))

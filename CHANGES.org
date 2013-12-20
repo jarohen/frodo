@@ -1,0 +1,67 @@
+* Changes
+** 0.2.6
+
+Incorporating [[https://github.com/stuartsierra][Stuart Sierra]]'s '[[http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded][Reloaded]]' workflow - call
+=(reload-frodo!)= from the REPL to reload the web server.
+
+This is quite a big re-architect - splitting out into a *frodo-core*
+library and a minimal *lein-frodo* plugin. Hopefully this has made the
+whole codebase a lot simpler!
+
+Adding in *uberjar* functionality - build an uberjar with =lein frodo
+uberjar=
+
+*Deprecated*: =:handler= in config - replace with =:handler-fn= and
+ensure the referenced function is a zero-arg function returning a web
+handler. Behaviour to be removed in 0.3.0. Existing behaviour will
+work (for now) but you'll get a deprecation warning.
+
+** 0.2.5
+
+Left in a cheeky println on startup - removed.
+
+** 0.2.4
+
+No breaking changes - CLJX support
+
+** 0.2.3
+
+Upstream dependency updates.
+
+** 0.2.2
+
+Minor bugfix - creating 'target/classes' directory if it doesn't exist
+
+** 0.2.1
+
+Fixed a bug whereby requiring =cemerick.austin.repls= when it wasn't
+linked threw exceptions. Now use =(frodo/repl-connect-js)= which will
+work if CLJS REPLs are turned on but won't error if they're turned off
+(e.g. in prod)
+
+** 0.2.0
+
+No breaking changes. Frodo now uses [[http://httpkit.org][http-kit]] to provide the
+web server. http-kit is compatible with ring and ring-jetty, so you
+shouldn't have any trouble.
+
+The =:handler= key has been moved inside the =:web= map in the config
+file. The original location still works, but it has been deprecated,
+and will be removed in 0.3.0.
+
+Also, the nREPL port is now saved to =target/repl-port= to be
+consistent with =lein repl=.
+
+** 0.1.2
+
+No breaking changes. Added CLJS REPL functionality.
+
+** 0.1.1
+
+No breaking changes. Better error handling if the user doesn't specify
+a handler.
+
+** 0.1.0
+
+Initial release.
+

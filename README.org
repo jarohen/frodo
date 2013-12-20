@@ -1,0 +1,281 @@
+* Lein-Frodo
+
+A Leiningen plugin to start a web server (backed by [[http://http-kit.org/index.html][http-kit]] easily
+via configuration in Nomad, and also to start and connect to a
+ClojureScript REPL.
+
+** Dependency
+
+Include =lein-frodo= as a plugin in your =project.clj=:
+
+#+BEGIN_SRC clojure
+  :plugins [[jarohen/lein-frodo "0.2.6"]]
+#+END_SRC
+
+** Changes
+
+Now moved to [[https://github.com/james-henderson/frodo/tree/master/CHANGES.org][CHANGES.org]].
+
+** Benefits
+
+- Easy setup of a web server that you can nREPL into
+- Easy setup of a ClojureScript browser REPL
+- Easy integration with Stuart Sierra's ([[https://github.com/stuartsierra][@stuartsierra]]) [[http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded]['Reloaded']]
+  workflow
+- Ability to open up an nREPL even if you have compiler errors - you
+  can use the REPL to find them without restarting the JVM each time
+
+** Why?
+
+Well, I already use *Nomad* for most of my configuration. I configure
+various environments using Nomad's environment functionality, and
+wanted the web server to be configured in the same way.
+
+In each project, I found myself writing the same boilerplate startup
+code - reading the port details from my configuration in order to
+start nREPL and a web server on the relevant ports for the
+environment.
+
+With Frodo, it's possible to start web applications with:
+
+#+BEGIN_SRC sh
+  NOMAD_ENV=<<environment>> lein frodo
+#+END_SRC
+
+and have the ports vary by environment.
+
+For more details about what's possible with Nomad, please see [[https://github.com/james-henderson/nomad][its
+project page]].
+
+(I did use [[https://github.com/weavejester/lein-ring][lein-ring]] for a bit but, while it is a great plugin, I'd
+much prefer all my configuration in one place - hence taking the time
+to write this!)
+
+*** "About the name...?"
+
+Yes, it's corny, I'm sorry! I did toy with *lein-nomad-ring*, and
+various permutations, but none of them really seemed to bring together
+Ring and Nomad in the way *lein-frodo* did. Alternatives gratefully
+received!
+
+** Getting started
+
+First, create a Nomad configuration file somewhere on your classpath,
+and add a =:frodo/config= key, as follows:
+
+#+BEGIN_SRC clojure
+  ;; *project-root*/resources/config/nomad-config.edn:
+  
+  {:frodo/config {:nrepl {:port 7888}
+                  :web {:port 3000
+                        :handler-fn myapp.web/make-handler}}}
+#+END_SRC
+
+The function referenced by =:handler-fn= should accept zero args, and
+return a Ring handler. This function is called when you call
+=(reload-frodo!)=, so this is the place to set up your system's state,
+in line with the [[http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded]['Reloaded']] workflow (more details below).
+
+(The original =:handler= entry is now deprecated, and will be removed
+in 0.3.0)
+
+Then, add an entry in your =project.clj= to tell Frodo where your
+Nomad file is:
+
+#+BEGIN_SRC clojure
+  :frodo/config-resource "config/nomad-config.edn"
+#+END_SRC
+
+To run the Ring server, run:
+
+#+BEGIN_SRC sh
+  lein frodo
+#+END_SRC
+
+** "You say you use multiple environments?"
+
+Yes - you can do this in the traditional Nomad way:
+
+#+BEGIN_SRC clojure
+  ;; *project-root*/resources/config/nomad-config.edn:
+  
+  {:nomad/environments {"dev"
+                        {:frodo/config {:nrepl {:port 7888}
+                                        :web {:port 3000}}}
+  
+                        "prod"
+                        {:frodo/config {:nrepl {:port nil}
+                                        :web {:port 4462}}}}}
+#+END_SRC										
+
+Then, start your application with either:
+
+#+BEGIN_SRC sh
+  NOMAD_ENV=dev lein frodo
+#+END_SRC
+
+or:
+
+#+BEGIN_SRC sh
+  NOMAD_ENV=prod lein frodo
+#+END_SRC	
+
+This is just the simplest multiple environment configuration - there
+are many more possibilities on the [[https://github.com/james-henderson/nomad][Nomad project page]].
+
+** Frodo, Reloaded.
+
+As of 0.2.6, you can develop web-apps in Frodo using Stuart Sierra's
+[[http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded]['Reloaded']] workflow. I won't go into huge detail about the pattern
+itself (his blog is very informative and plenty else has been written
+about the benefits!) but I do find it a great way to get a 'fresh'
+state without having to restart the JVM.
+
+Essentially:
+
+- Make sure that the function you've referenced in the =:handler-fn=
+  key is a zero-arg function that sets up your system state and
+  returns a Ring handler.
+- Ensure that your code doesn't contain any =def='s or =defonce='s
+  (and preferably no =defroutes='s - replace these with =(defn
+  my-routes [] (routes ...))=) so that all the state can be reloaded.
+- Call =(reload-frodo!)= from the =user= namespace to throw out the
+  old state and start afresh. This will stop the web server, refresh
+  any changed code files, and restart the web server, without
+  restarting the JVM. This typically takes less than a second.
+
+As a simple migration from <0.2.6, you can rename =:handler= to
+=:handler-fn= in your Frodo config, and turn:
+
+#+BEGIN_SRC clojure
+  (defroutes app-routes
+    ...)
+  
+  (def your-handler
+    (-> app-routes
+        ...))
+#+END_SRC
+
+into
+
+#+BEGIN_SRC clojure
+  (defn app-routes []
+    (let [system (new-system)]
+      (routes
+        ...)))
+  
+  (defn your-handler []
+    (-> (app-routes)
+        ...))
+#+END_SRC
+
+Then, from your REPL:
+
+#+BEGIN_SRC clojure
+  user> (reload-frodo!)
+  
+  ;; Stopping web server.
+  ;; :reloading (tetris.multiplayer tetris.handler)
+  ;; Starting web server, port 3000
+  ;; => nil
+#+END_SRC
+
+** ClojureScript REPL
+
+Frodo also allows you to start and connect to a ClojureScript
+REPL. Frodo's CLJS support is a lightweight wrapper around Chas
+Emerick's excellent [[https://github.com/cemerick/austin][Austin]] library.
+
+Setting this up in Frodo is achieved with 4 easy steps:
+
+1. Include =:cljs-repl? true= in your nREPL configuration, as follows:
+   
+   #+BEGIN_SRC clojure
+     {:nomad/environments {"dev"
+                           {:frodo/config {:nrepl {:port 7888
+                                                   :cljs-repl? true}
+                                           :web {:port 3000}}}}}
+   #+END_SRC
+   
+2. Include a snippet of JS in your web page to connect your browser to
+   the REPL. The =(frodo/repl-connect-js)= function provides the JS -
+   you just have to include it in the <body> tag.
+   
+   You can do this with Hiccup:
+   #+BEGIN_SRC clojure
+     (:require [frodo :refer [repl-connect-js]])
+     ...
+     [:script (repl-connect-js)]
+   #+END_SRC
+   
+   (If the CLJS REPL is disabled, =repl-connect-js= returns =nil=, so
+   you can leave this in even when the CLJS REPL is disabled - e.g. in
+   production)
+   
+3. Connect to your usual Clojure REPL, and run =(require 'frodo)=,
+   then =(frodo/cljs-repl)= to turn it into a CLJS REPL. (Type
+   =:cljs/quit= to exit back to the Clojure REPL)
+   
+4. Refresh your browser window to connect it to your REPL.
+   
+You should then be able to run commands in the CLJS REPL as you would
+do with any other Clojure REPL. A good smoke test is any one of the
+following:
+
+#+BEGIN_SRC clojure
+  (js/alert "Hello world!")
+  (js/console.log "Hello world!")
+  (-> js/document .-body (.setAttribute "style" "background:green"))
+#+END_SRC
+
+I have also tested this in Emacs - most of the usual nREPL keybindings
+work fine with CLJS REPLs. The only exception I've found so far (as of
+2013-09-14) is =M-period= and =M-comma= - jump to (and back from) a
+declaration.
+
+For more information about Austin and CLJS REPLs in general, Chas has
+written a [[https://github.com/cemerick/austin/blob/master/README.md][great tutorial]], a [[https://github.com/cemerick/austin/tree/master/browser-connected-repl-sample][sample project]] and a [[http://www.youtube.com/watch?v=a1Bs0pXIVXc&feature=youtu.be][screencast]].
+
+** CLJX support
+
+As of 0.2.4, Frodo transparently supports [[https://github.com/lynaghk/cljx][CLJX]] - if you have a =:cljx=
+key in your =project.clj=, Frodo will ensure the necessary middleware
+is in place.
+
+See [[https://github.com/lynaghk/cljx][CLJX]]'s project page for more details on how to use it.
+
+** UberJAR support (beta)
+
+To build a batteries-included JAR file of your application, run =lein
+frodo uberjar=.
+
+** Future features?
+
+- *SSL*? I'm not sure how many people use SSL within Clojure - from
+  what I can tell most people sit it behind an nginx/httpd proxy. If
+  you want to include SSL support, please feel free to submit a pull
+  request.
+- *uberwar*? Again, I don't use this, but if you do and you care
+  enough to write a patch, it'll be gratefully received!
+  
+** Pull requests/bug reports/feedback etc?
+
+Yes please, much appreciated! Please submit via GitHub in the
+traditional manner. (Or, if it fits into 140 chars, you can tweet
+[[https://twitter.com/jarohen][@jarohen]])
+
+** Thanks
+
+- Big thanks to [[https://github.com/weavejester][James Reeves]] for his *lein-ring* project (amongst
+  everything else!) from which I have plundered a couple of ideas and
+  snippets of code. Also, thanks for the general help and advice.
+- Also, thanks to [[https://github.com/cemerick][Chas Emerick]] for his *Austin* CLJS REPL library.
+- Thanks to [[https://github.com/lynaghk][Kevin Lynagh]] for his *CLJX* CLJ/CLJS crossovers library
+- Thanks to [[https://github.com/stuartsierra][Stuart Sierra]] for writing up his '[[http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded][Reloaded]]' workflow - a
+  great way of thinking about server-side state in Clojure
+  
+** License
+
+Copyright © 2013 James Henderson
+
+Distributed under the Eclipse Public License, the same as Clojure.
