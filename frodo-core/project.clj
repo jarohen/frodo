@@ -9,4 +9,6 @@
                  [org.clojure/tools.namespace "0.2.4"]
                  [alembic "0.2.0"]
                  
-                 [jarohen/nomad "0.6.0"]])
+                 [jarohen/nomad "0.6.0"]]
+
+  :aot [frodo.main])

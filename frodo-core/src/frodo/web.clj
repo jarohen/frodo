@@ -35,7 +35,6 @@
 
 (defn- start-web-server! [!server config]
   (let [{:keys [handler web-port]} (read-web-config config)]
-    (refresh)
     (println "Starting web server, port" web-port)
 
     (let [server (start-httpkit! handler {:port web-port :join? false})]
@@ -55,11 +54,12 @@
 
 (defn- reload-web-server! [!server config]
   (stop-web-server! !server)
+  (refresh)
   (start-web-server! !server config))
 
 (defn init-web! [_config]
   (let [!server (ref nil)]
-    (intern 'user 'start-frodo! #(start-web-server! !server (_config)))
+    (intern 'user 'start-frodo! #(do (refresh) (start-web-server! !server (_config))))
     (intern 'user 'stop-frodo! #(stop-web-server! !server))
     (intern 'user 'reload-frodo! #(reload-web-server! !server (_config)))
 

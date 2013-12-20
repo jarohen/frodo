@@ -21,8 +21,6 @@
      [:div#content]]
     [:script (repl-connect-js)]]))
 
-#_(page-frame)
-
 (defn app-routes [started-time]
   (routes
     (GET "/" [] (response (page-frame started-time)))
