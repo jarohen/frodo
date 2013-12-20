@@ -11,4 +11,6 @@
                  
                  [jarohen/nomad "0.6.0"]]
 
+  :scm {:dir ".."}
+
   :aot [frodo.main])

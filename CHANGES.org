@@ -1,4 +1,11 @@
 * Changes
+** 0.2.7 / 0.2.8
+
+No code changes. Releases to appease Clojars - can't promote
+without :scm key, can't push over an existing release, have to make
+sure you've made a git commit before testing a clojars deploy etc etc
+etc.
+
 ** 0.2.6
 
 Incorporating [[https://github.com/stuartsierra][Stuart Sierra]]'s '[[http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded][Reloaded]]' workflow - call

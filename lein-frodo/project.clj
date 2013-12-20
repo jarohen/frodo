@@ -9,5 +9,9 @@
                  [jarohen/nomad "0.6.0"]]
 
   :resource-paths ["resources" "../common"]
+
+  :scm {:dir ".."}
   
   :eval-in-leiningen true)
+
+
