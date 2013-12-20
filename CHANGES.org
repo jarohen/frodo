@@ -1,5 +1,5 @@
 * Changes
-** 0.2.7 / 0.2.8
+** 0.2.7 / 0.2.8 / 0.2.9
 
 No code changes. Releases to appease Clojars - can't promote
 without :scm key, can't push over an existing release, have to make
