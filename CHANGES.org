@@ -1,4 +1,9 @@
 * Changes
+** 0.2.10 / 0.2.11
+
+No breaking changes - updates to Nomad version. I'd advise you update
+to 0.2.11 as it includes the bugfixes in Nomad 0.6.2.
+
 ** 0.2.7 / 0.2.8 / 0.2.9
 
 No code changes. Releases to appease Clojars - can't promote
