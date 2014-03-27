@@ -9,7 +9,7 @@ ClojureScript REPL.
 Include =lein-frodo= as a plugin in your =project.clj=:
 
 #+BEGIN_SRC clojure
-  :plugins [[jarohen/lein-frodo "0.2.11"]]
+  :plugins [[jarohen/lein-frodo "0.2.12"]]
 #+END_SRC
 
 ** Changes
@@ -64,11 +64,11 @@ First, create a Nomad configuration file somewhere on your classpath,
 and add a =:frodo/config= key, as follows:
 
 #+BEGIN_SRC clojure
-  ;; *project-root*/resources/config/nomad-config.edn:
-  
-  {:frodo/config {:nrepl {:port 7888}
-                  :web {:port 3000
-                        :handler-fn myapp.web/make-handler}}}
+    ;; *project-root*/resources/config/nomad-config.edn:
+    
+    {:frodo/config {:nrepl {:port 7888}
+                    :web {:port 3000
+                          :handler-fn myapp.web/make-handler}}}
 #+END_SRC
 
 The function referenced by =:handler-fn= should accept zero args, and
@@ -98,11 +98,11 @@ Yes - you can do this in the traditional Nomad way:
 
 #+BEGIN_SRC clojure
   ;; *project-root*/resources/config/nomad-config.edn:
-  
+
   {:nomad/environments {"dev"
                         {:frodo/config {:nrepl {:port 7888}
                                         :web {:port 3000}}}
-  
+
                         "prod"
                         {:frodo/config {:nrepl {:port nil}
                                         :web {:port 4462}}}}}
@@ -122,6 +122,20 @@ or:
 
 This is just the simplest multiple environment configuration - there
 are many more possibilities on the [[https://github.com/james-henderson/nomad][Nomad project page]].
+
+*** Passing options to HTTP-kit
+
+You can pass options to HTTP-kit by specifying a =:http-kit/options=
+key in the =:web= map:
+
+#+BEGIN_SRC clojure
+  {:frodo/config {:nrepl {...}
+                  :web {:port ...
+                        :handler-fn ...
+                        :http-kit/options {:thread 100}}}}
+#+END_SRC
+
+For a full list of the options that HTTP-kit accepts, please see [[http://http-kit.org/server.html][here]].
 
 ** Frodo, Reloaded.
 

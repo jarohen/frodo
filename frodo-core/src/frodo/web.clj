@@ -26,18 +26,21 @@
 
 (defn read-web-config [config]
   (let [handler (get-handler config)
-        web-port (get-in config [:frodo/config :web :port])]
+        web-port (get-in config [:frodo/config :web :port])
+        http-kit-options (get-in config [:frodo/config :web :http-kit/options])]
     (assert handler "Please supply a handler in the Frodo config")
     (assert handler "Please supply a web server port in the Frodo config")
 
     {:handler handler
-     :web-port web-port}))
+     :web-port web-port
+     :http-kit/options http-kit-options}))
 
 (defn- start-web-server! [!server config]
-  (let [{:keys [handler web-port]} (read-web-config config)]
+  (let [{:keys [handler web-port] :as web-config} (read-web-config config)]
     (println "Starting web server, port" web-port)
 
-    (let [server (start-httpkit! handler {:port web-port :join? false})]
+    (let [server (start-httpkit! handler (merge {:port web-port :join? false}
+                                                (:http-kit/options web-config)))]
       (dosync
        (ref-set !server server)
        nil))))
