@@ -1,4 +1,9 @@
 * Changes
+** 0.2.12
+
+Allowing you to include =:http-kit/options= in the =:web= map to pass
+options through to HTTP-kit
+
 ** 0.2.10 / 0.2.11
 
 No breaking changes - updates to Nomad version. I'd advise you update
