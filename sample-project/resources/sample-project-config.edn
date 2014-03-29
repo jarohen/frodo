@@ -2,4 +2,4 @@
                       :handler-fn sample-project.handler/app
                       :http-kit/options {:thread 100}}
                 :nrepl {:port 7888
-                        :cljs-repl? true}}}
+                        :brepl-port 9002}}}
