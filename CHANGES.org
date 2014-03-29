@@ -16,6 +16,7 @@ connections etc) with Weasel than Austin.
 To migrate from 0.2.x to 0.3.0:
 
 - In general, browser REPLs are now referred to as 'bREPL' throughout Frodo.
+
 - In your Nomad config, substitute
   #+BEGIN_SRC clojure
     {:frodo/config {:nrepl {:cljs-repl? true}}}
@@ -24,6 +25,7 @@ To migrate from 0.2.x to 0.3.0:
   #+BEGIN_SRC clojure
     {:frodo/config {:nrepl {:brepl-port 9001}}}
   #+END_SRC
+
 - You now need to require =frodo.brepl= somewhere in your CLJS app,
   rather than =clojure.browser.repl=. I do this in the main NS:
   #+BEGIN_SRC clojure
@@ -31,8 +33,56 @@ To migrate from 0.2.x to 0.3.0:
       (:require frodo.brepl
                 ...))
   #+END_SRC
+
 - To start a bREPL, eval =(frodo-brepl)= in the =user= NS, rather than
   =(frodo/cljs-repl)=.
+
+**** Reloaded - new =App= protocol
+
+The recommended entry point to a Frodo application is now through the
+=frodo.web/App= protocol, a protocol with =start!= and =stop!=
+functions for you to set up and tear down state and resources.
+
+=:handler-fn= and =:handler= are still supported for backwards
+compatibility, but they may be removed in a future version.
+
+To (optionally) migrate from 0.2.x:
+
+- In your Nomad config, substitute
+  #+BEGIN_SRC clojure
+    {:frodo/config {:web {:handler-fn myapp.web/make-handler}}}
+  #+END_SRC
+  or
+  #+BEGIN_SRC clojure
+    {:frodo/config {:web {:handler myapp.web/handler}}}
+  #+END_SRC
+  for
+  #+BEGIN_SRC clojure
+    {:frodo/config {:web {:app myapp.web/app}}}
+  #+END_SRC
+
+- In =myapp/web.clj=, substitute
+  #+BEGIN_SRC clojure
+  (defn make-handler []
+    (let [db-conn (connect-db! ...)]
+      (api-routes db-conn)))
+  #+END_SRC
+  for
+  #+BEGIN_SRC clojure
+    (:require [frodo.web :refer [App]])
+    
+    (def app
+      (reify App
+    
+        (start! [_]
+          (let [db-conn (connect-db! ...)]
+            {:db-conn db-conn
+             :frodo/handler (api-routes db-conn)}))
+    
+        (stop! [_ system]
+          (disconnect-db! (:db-conn system)))))
+  #+END_SRC
+
 
 ** 0.2.x
 *** 0.2.12
