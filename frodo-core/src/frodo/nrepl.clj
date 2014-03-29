@@ -5,7 +5,7 @@
 
 (defn- load-cljx! []
   (with-out-str
-    (a/distill '[[com.keminglabs/cljx "0.3.1"]])
+    (a/distill '[[com.keminglabs/cljx "0.3.2"]])
     (require 'cljx.repl-middleware)))
 
 (defn- load-cljs-repl! []
