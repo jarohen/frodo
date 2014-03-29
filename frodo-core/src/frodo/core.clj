@@ -1,7 +1,9 @@
-(ns ^{:clojure.tools.namespace.repl/load false} frodo.core
-    (:require [nomad :refer [defconfig]]
-              [frodo.nrepl :refer [start-nrepl!]]
-              [frodo.web :refer [init-web!]]))
+(ns ^{:clojure.tools.namespace.repl/load false
+      :clojure.tools.namespace.repl/unload false}
+  frodo.core
+  (:require [nomad :refer [defconfig]]
+            [frodo.nrepl :refer [start-nrepl!]]
+            [frodo.web :refer [init-web!]]))
 
 (defn init-frodo! [config-resource & [{:keys [cljx? target-path] :as nrepl-opts}]]
   (defconfig ^:private _config config-resource)

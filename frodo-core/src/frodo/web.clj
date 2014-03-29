@@ -1,7 +1,9 @@
-(ns ^{:clojure.tools.namespace.repl/load false} frodo.web
-    (:require [clojure.tools.namespace.repl :refer [refresh]]
-              [clojure.string :as s]
-              [org.httpkit.server :refer [run-server] :rename {run-server start-httpkit!}]))
+(ns ^{:clojure.tools.namespace.repl/load false
+      :clojure.tools.namespace.repl/unload false}
+  frodo.web
+  (:require [clojure.tools.namespace.repl :refer [refresh]]
+            [clojure.string :as s]
+            [org.httpkit.server :refer [run-server] :rename {run-server start-httpkit!}]))
 
 (defn handler-deprecation-warning! []
   (binding [*out* *err*]

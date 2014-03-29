@@ -1,4 +1,6 @@
-(ns frodo.main
+(ns ^{:clojure.tools.namespace.repl/load false
+      :clojure.tools.namespace.repl/unload false}
+  frodo.main
   (:gen-class)
   (:require [clojure.java.io :as io]
             [nomad :refer [defconfig]]
