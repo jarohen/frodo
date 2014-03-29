@@ -8,19 +8,24 @@
     (a/distill '[[com.keminglabs/cljx "0.3.2"]])
     (require 'cljx.repl-middleware)))
 
-(defn- load-cljs-repl! []
+(defn- load-brepl! [brepl-port]
   (with-out-str
-    (a/distill '[[com.cemerick/austin "0.1.3"]])
-    (require 'cemerick.piggieback)
-    (require 'cemerick.austin.repls)))
+    (a/distill '[[weasel "0.1.0"]
+                 [com.cemerick/piggieback "0.1.3"]])
+    (require 'frodo.brepl)
+    
+    (doto 'frodo.brepl
+      (intern 'brepl-port brepl-port))
+    
+    (intern 'user 'frodo-brepl (eval '#'frodo.brepl/brepl))))
 
 (defn- repl-handler [config cljx?]
   (apply nrepl/default-handler 
          (concat (when cljx?
                    (load-cljx!)
                    (eval `[#'cljx.repl-middleware/wrap-cljx]))
-                 (when (get-in config [:frodo/config :nrepl :cljs-repl?])
-                   (load-cljs-repl!)
+                 (when-let [brepl-port (get-in config [:frodo/config :nrepl :brepl-port])]
+                   (load-brepl! brepl-port)
                    (eval `[#'cemerick.piggieback/wrap-cljs-repl])))))
 
 (defn start-nrepl! [config & [{:keys [cljx? target-path]}]]
