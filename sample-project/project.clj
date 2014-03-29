@@ -22,6 +22,8 @@
             [lein-cljsbuild "1.0.2"]
             [lein-pdo "0.1.1"]]
 
+  :hooks [leiningen.cljsbuild]
+
   :frodo/config-resource "sample-project-config.edn"
 
   :source-paths ["src/clojure"]
@@ -29,6 +31,7 @@
   :resource-paths ["resources" "target/resources"]
 
   :cljsbuild {:builds [{:source-paths ["src/cljs"]
+                        :jar true
                         :compiler {:output-to "target/resources/js/sample-project.js"
                                    :optimizations :whitespace
                                    :pretty-print true}}]}
