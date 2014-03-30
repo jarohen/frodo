@@ -9,7 +9,7 @@ ClojureScript REPL.
 Include =lein-frodo= as a plugin in your =project.clj=:
 
 #+BEGIN_SRC clojure
-  :plugins [[jarohen/lein-frodo "0.3.0-SNAPSHOT"]]
+  :plugins [[jarohen/lein-frodo "0.3.0-rc1"]]
 #+END_SRC
 
 ** Changes
