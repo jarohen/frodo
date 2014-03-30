@@ -4,7 +4,8 @@
             [compojure.route :refer [resources]]
             [compojure.handler :refer [api]]
             [hiccup.page :refer [html5 include-css include-js]]
-            [frodo.brepl :refer [brepl-js]]))
+            [frodo.brepl :refer [brepl-js]]
+            [frodo.web :refer [App]]))
 
 (defn page-frame [started-time]
   (html5
@@ -28,6 +29,13 @@
     (GET "/" [] (response (page-frame started-time)))
     (resources "/js" {:root "js"})))
 
-(defn app [] 
-  (-> (app-routes (java.util.Date.))
-      api))
+(def app
+  (reify App
+    (start! [_]
+      (let [started-time (java.util.Date.)]
+        (println "Starting system")
+        {:frodo/handler (-> (app-routes started-time)
+                            api)
+         ::started-time started-time}))
+    (stop! [_ system]
+      (println "Stopping system" (pr-str system)))))

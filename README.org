@@ -71,23 +71,51 @@ First, create a Nomad configuration file somewhere on your classpath,
 and add a =:frodo/config= key, as follows:
 
 #+BEGIN_SRC clojure
-    ;; *project-root*/resources/config/nomad-config.edn:
-    
-    {:frodo/config {:nrepl {:port 7888}
-                    :web {:port 3000
-                          :handler-fn myapp.web/make-handler}}}
+  ;; *project-root*/resources/config/nomad-config.edn:
+  
+  {:frodo/config {:nrepl {:port 7888}
+                  :web {:port 3000
+                        :app myapp.web/app}}}
 #+END_SRC
 
-The function referenced by =:handler-fn= should accept zero args, and
-return a Ring handler. This function is called when you call
-=(reload-frodo!)=, so this is the place to set up your system's state,
-in line with the [[http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded]['Reloaded']] workflow (more details below).
+Frodo expects apps to provide an instance of its =App= protocol,
+containing two functions: =start!= and =stop!=.
 
-(The original =:handler= entry is now deprecated, and will be removed
-in 0.3.0)
+#+BEGIN_SRC clojure
+  (ns myapp.web
+    (:require [frodo.web :refer [App]]
+              [compojure.core :refer [routes GET]]
+              [ring.util.response :refer [response]]))
+  
+  (defn api-routes [db-conn]
+    (routes
+      (GET "/items" [] (response (get-items db-conn)))))
+  
+  ;; recommended as of 0.3.0
+  (def app
+    (reify App
 
-Then, add an entry in your =project.clj= to tell Frodo where your
-Nomad file is:
+      (start! [_]
+        (let [db-conn (connect-db! ...)]
+          {:db-conn db-conn
+           :scheduler (start-scheduler! db-conn)
+           ;; Apps must return a :frodo/handler key
+           :frodo/handler (api-routes db-conn)}))
+
+      (stop! [_ system]
+        (stop-scheduler! (:scheduler system))
+        (disconnect-db! (:db-conn system)))))
+#+END_SRC
+
+Frodo expects the =start!= function to return a system map containing
+at least a =:frodo/handler= key. When the server is stopped or
+restarted, this system map is passed to the =stop!= function for you
+to tear down any state/close resources etc (in line with the
+[[http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded]['Reloaded']] workflow - more details below).
+
+
+When you've created your =App=, add an entry in your =project.clj= to
+tell Frodo where your config file is:
 
 #+BEGIN_SRC clojure
   :frodo/config-resource "config/nomad-config.edn"
@@ -97,6 +125,40 @@ To run the Ring server, run:
 
 #+BEGIN_SRC sh
   lein frodo
+#+END_SRC
+
+*** Pre 0.3.0 handlers
+
+Frodo supports two alternatives to providing an 'app', for backwards
+compatibility: =:handler-fn= and =:handler=. 'Handler functions' are
+0-arg functions that return a Ring handler, whereas the simpler
+'handler' is a static handler.
+
+These may be removed in a future version of Frodo.
+
+#+BEGIN_SRC clojure
+  ;; ---- config/nomad-config.edn ----
+  
+  {:frodo/config {:nrepl {:port 7888}
+                  :web {:port 3000
+                        ;; any one of :app, :handler-fn or :handler is req'd
+                        :app myapp.web/app
+                        :handler-fn myapp.web/make-handler
+                        :handler myapp.web/handler}}}
+  
+  ;; ---- myapp/web.clj ----
+  
+  ;; like the 'start!' function of 'app' - no corresponding 'stop!' fn
+  ;; though.
+  (defn make-handler []
+    (let [db-conn (connect-db! ...)]
+      (api-routes db-conn)))
+  
+  ;; static handler
+  (def handler
+    (routes
+      (GET "/" [] (response "Hello world!"))))
+  
 #+END_SRC
 
 ** "You say you use multiple environments?"
@@ -154,43 +216,18 @@ state without having to restart the JVM.
 
 Essentially:
 
-- Make sure that the function you've referenced in the =:handler-fn=
-  key is a zero-arg function that sets up your system state and
-  returns a Ring handler.
+- Set up your system state and resources in the =start!= function (for
+  an =App=).
 - Ensure that your code doesn't contain any =def='s or =defonce='s
   (and preferably no =defroutes='s - replace these with =(defn
   my-routes [] (routes ...))=) so that all the state can be reloaded.
+- Tear down any state and close resources in the =stop!= function
 - Call =(reload-frodo!)= from the =user= namespace to throw out the
   old state and start afresh. This will stop the web server, refresh
   any changed code files, and restart the web server, without
   restarting the JVM. This typically takes less than a second.
 
-As a simple migration from <0.2.6, you can rename =:handler= to
-=:handler-fn= in your Frodo config, and turn:
-
-#+BEGIN_SRC clojure
-  (defroutes app-routes
-    ...)
-  
-  (def your-handler
-    (-> app-routes
-        ...))
-#+END_SRC
-
-into
-
-#+BEGIN_SRC clojure
-  (defn app-routes []
-    (let [system (new-system)]
-      (routes
-        ...)))
-  
-  (defn your-handler []
-    (-> (app-routes)
-        ...))
-#+END_SRC
-
-Then, from your REPL:
+To restart the web server from your REPL:
 
 #+BEGIN_SRC clojure
   user> (reload-frodo!)

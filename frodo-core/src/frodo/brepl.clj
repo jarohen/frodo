@@ -1,4 +1,6 @@
-(ns frodo.brepl
+(ns ^{:clojure.tools.namespace.repl/load false
+      :clojure.tools.namespace.repl/unload false}
+  frodo.brepl
   (:require [cemerick.piggieback :as p]
             [weasel.repl.websocket :as ws-repl]))
 
