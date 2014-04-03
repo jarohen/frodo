@@ -9,7 +9,7 @@ ClojureScript REPL.
 Include =lein-frodo= as a plugin in your =project.clj=:
 
 #+BEGIN_SRC clojure
-  :plugins [[jarohen/lein-frodo "0.3.0-rc1"]]
+  :plugins [[jarohen/lein-frodo "0.3.0-rc2"]]
 #+END_SRC
 
 ** Changes
@@ -243,6 +243,8 @@ To restart the web server from your REPL:
 *Frodo's ClojureScript REPL has changed a fair bit in 0.3.0 - please
 refer to the migration guide in the ChangeLog.*
 
+*Frodo depends on at least =[org.clojure/clojurescript "0.0-2197"]=*
+
 Frodo also allows you to start and connect to a ClojureScript browser
 REPL (bREPL). Frodo's CLJS support is a lightweight wrapper around Tom
 Jakubowski's new [[https://github.com/tomjakubowski/weasel][Weasel]] library, which uses WebSockets to communicate
@@ -307,14 +309,6 @@ I have also tested this in Emacs - most of the usual nREPL keybindings
 work fine with CLJS REPLs. The only exception I've found so far (as of
 2013-09-14) is =M-period= and =M-comma= - jump to (and back from) a
 declaration.
-
-** CLJX support
-
-As of 0.2.4, Frodo transparently supports [[https://github.com/lynaghk/cljx][CLJX]] - if you have a =:cljx=
-key in your =project.clj=, Frodo will ensure the necessary middleware
-is in place.
-
-See [[https://github.com/lynaghk/cljx][CLJX]]'s project page for more details on how to use it.
 
 ** UberJAR support (beta)
 

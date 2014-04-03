@@ -13,17 +13,17 @@
 
                  [prismatic/dommy "0.1.2"]
 
-                 [org.clojure/clojurescript "0.0-2197"]
-                 [org.clojure/tools.reader "0.8.3"]
-                 [jarohen/frodo-core "0.3.0-SNAPSHOT"]
-                 [weasel "0.1.0"]]
+                 [org.clojure/clojurescript "0.0-2202"]
+                 [org.clojure/tools.reader "0.8.3"]]
 
   :plugins [[jarohen/lein-frodo "0.3.0-SNAPSHOT"]
-            [lein-cljsbuild "1.0.2"]
-            [lein-pdo "0.1.1"]]
+            [lein-cljsbuild "1.0.3"]
+
+            [lein-pdo "0.1.1"]
+            [com.keminglabs/cljx "0.3.2"]]
 
   :hooks [leiningen.cljsbuild]
-
+  
   :frodo/config-resource "sample-project-config.edn"
 
   :source-paths ["src/clojure"]

@@ -33,9 +33,9 @@
   (reify App
     (start! [_]
       (let [started-time (java.util.Date.)]
-        (println "Starting system")
+        (println "Starting sample Frodo project...")
         {:frodo/handler (-> (app-routes started-time)
                             api)
          ::started-time started-time}))
     (stop! [_ system]
-      (println "Stopping system" (pr-str system)))))
+      (println "Stopping sample Frodo project..." (pr-str system)))))

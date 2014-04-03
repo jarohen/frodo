@@ -4,11 +4,15 @@
   (:require [cemerick.piggieback :as p]
             [weasel.repl.websocket :as ws-repl]))
 
-(def ^:private brepl-port)
+(def ^:private !brepl-port
+  (atom nil))
 
-(defn brepl []
-  (p/cljs-repl :repl-env (ws-repl/repl-env :port brepl-port)))
-
+(defn load-brepl! [brepl-port]
+  (reset! !brepl-port brepl-port)
+  (intern 'user 'frodo-brepl
+          (fn []
+            (p/cljs-repl :repl-env (ws-repl/repl-env :port brepl-port)))))
+ 
 (defn brepl-open? []
   ;; Admittedly, this is quite a hack to decide whether the WS is
   ;; open...
@@ -17,8 +21,6 @@
 (defn brepl-js []
   (format "window.frodo_repl_port=%d;"
           (when (brepl-open?)
-            brepl-port)))
-
-
+            @!brepl-port)))
 
 
