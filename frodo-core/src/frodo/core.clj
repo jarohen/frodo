@@ -5,9 +5,9 @@
             [frodo.nrepl :refer [start-nrepl!]]
             [frodo.web :refer [init-web!]]))
 
-(defn init-frodo! [config-resource & [{:keys [cljx? target-path] :as nrepl-opts}]]
+(defn init-frodo! [{:keys [config-resource repl-options target-path] :as project}]
   (defconfig ^:private _config config-resource)
 
-  (start-nrepl! (_config) nrepl-opts)
+  (start-nrepl! (_config) project)
 
   (init-web! _config))

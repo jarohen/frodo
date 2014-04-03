@@ -4,35 +4,31 @@
             [leiningen.uberjar :as u]
             [clojure.java.io :as io]
             [leinjacker.utils :refer [get-classpath]]
-
-            [nomad :refer [defconfig]]))
-
-(defn add-core-dep [project]
-  (-> project
-      (deps/add-if-missing `[jarohen/frodo-core ~(slurp (io/resource "FRODO-VERSION"))])))
+            [lein-frodo.plugin :refer [with-frodo-core-dep]]))
 
 (defn server
   "Starts the Frodo application, as per the configuration file specified in project.clj.
 
    Usage: lein frodo [server]"
   [project]
-  
-  (let [nomad-resource (:frodo/config-resource project)]
-    (eval-in-project (add-core-dep project)
-                     `(#'frodo.core/init-frodo! (clojure.java.io/resource ~nomad-resource)
-                                                {:cljx? ~(boolean (:cljx project))
-                                                 :target-path ~(:target-path project)})
-                     `(require '~'frodo.core))))
+
+  (eval-in-project (with-frodo-core-dep project)
+                   `(frodo.core/init-frodo! {:config-resource (io/resource ~(:frodo/config-resource project))
+                                             :repl-options '~(:repl-options project)})
+                   
+                   `(require '~'frodo.core)))
 
 (defn uberjar-project-map [project]
-  (let [nomad-resource (:frodo/config-resource project)]
-    (-> project
-        add-core-dep
-        (assoc :main 'frodo.main)
-        (update-in [:aot] conj 'frodo.main)
-        (update-in [:filespecs] conj {:type :bytes
-                                      :path "META-INF/frodo-config-resource"
-                                      :bytes nomad-resource}))))
+  (-> project
+      with-frodo-core-dep
+      (assoc :main 'frodo.main)
+      (update-in [:aot] conj 'frodo.main)
+      (update-in [:filespecs] conj {:type :bytes
+                                    :path "META-INF/frodo-config-resource"
+                                    :bytes (:frodo/config-resource project)})
+      (update-in [:filespecs] conj {:type :bytes
+                                    :path "META-INF/frodo-repl-options"
+                                    :bytes (pr-str (:repl-options project))})))
 
 (defn uberjar
   "Creates an uberjar of the Frodo application
@@ -54,8 +50,8 @@
 
    For more details of how to set up and use Frodo, please refer to
    the documentation at https://github.com/james-henderson/frodo"
-  {:help-arglists '([] [server] [uberjar])
-   :subtasks [#'server #'server #'uberjar]}
+  {:help-arglists '([server] [uberjar])
+   :subtasks [#'server #'uberjar]}
   
   [project & [command & args]]
   
