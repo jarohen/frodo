@@ -12,6 +12,8 @@ Include =lein-frodo= as a plugin in your =project.clj=:
   :plugins [[jarohen/lein-frodo "0.3.0-rc2"]]
 #+END_SRC
 
+Frodo's ClojureScript REPL depends on at least =[org.clojure/clojurescript "0.0-2197"]=
+
 ** Changes
 
 Now moved to [[https://github.com/james-henderson/frodo/tree/master/CHANGES.org][CHANGES.org]].
@@ -242,8 +244,6 @@ To restart the web server from your REPL:
 
 *Frodo's ClojureScript REPL has changed a fair bit in 0.3.0 - please
 refer to the migration guide in the ChangeLog.*
-
-*Frodo depends on at least =[org.clojure/clojurescript "0.0-2197"]=*
 
 Frodo also allows you to start and connect to a ClojureScript browser
 REPL (bREPL). Frodo's CLJS support is a lightweight wrapper around Tom
