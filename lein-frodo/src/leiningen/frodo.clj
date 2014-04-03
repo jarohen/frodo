@@ -27,7 +27,7 @@
                                     :path "META-INF/frodo-config-resource"
                                     :bytes (:frodo/config-resource project)})
       (update-in [:filespecs] conj {:type :bytes
-                                    :path "META-INF/frodo-repl-options"
+                                    :path "META-INF/frodo-repl-options.edn"
                                     :bytes (pr-str (:repl-options project))})))
 
 (defn uberjar
