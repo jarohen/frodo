@@ -243,6 +243,8 @@ To restart the web server from your REPL:
 *Frodo's ClojureScript REPL has changed a fair bit in 0.3.0 - please
 refer to the migration guide in the ChangeLog.*
 
+*Frodo depends on at least =[org.clojure/clojurescript "0.0-2197"]=*
+
 Frodo also allows you to start and connect to a ClojureScript browser
 REPL (bREPL). Frodo's CLJS support is a lightweight wrapper around Tom
 Jakubowski's new [[https://github.com/tomjakubowski/weasel][Weasel]] library, which uses WebSockets to communicate
