@@ -1,8 +1,16 @@
 * Lein-Frodo
 
 A Leiningen plugin to start a web server (backed by [[http://http-kit.org/index.html][http-kit]]) easily
-via configuration in Nomad, and also to start and connect to a
-ClojureScript REPL.
+via configuration in Nomad.
+
+** Benefits
+
+- Easy setup of a web server that you can nREPL into
+- Easy setup of a ClojureScript browser REPL
+- Easy integration with Stuart Sierra's ([[https://github.com/stuartsierra][@stuartsierra]]) [[http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded]['Reloaded']]
+  workflow
+- Ability to open up an nREPL even if you have compiler errors - you
+  can use the REPL to find them without restarting the JVM each time
 
 ** Dependency
 
@@ -17,15 +25,6 @@ Frodo's ClojureScript REPL depends on at least =[org.clojure/clojurescript "0.0-
 ** Changes
 
 Now moved to [[https://github.com/james-henderson/frodo/tree/master/CHANGES.org][CHANGES.org]].
-
-** Benefits
-
-- Easy setup of a web server that you can nREPL into
-- Easy setup of a ClojureScript browser REPL
-- Easy integration with Stuart Sierra's ([[https://github.com/stuartsierra][@stuartsierra]]) [[http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded]['Reloaded']]
-  workflow
-- Ability to open up an nREPL even if you have compiler errors - you
-  can use the REPL to find them without restarting the JVM each time
 
 ** Why?
 
