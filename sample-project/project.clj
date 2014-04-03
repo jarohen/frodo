@@ -18,10 +18,12 @@
 
   :plugins [[jarohen/lein-frodo "0.3.0-SNAPSHOT"]
             [lein-cljsbuild "1.0.3"]
-            [lein-pdo "0.1.1"]]
+
+            [lein-pdo "0.1.1"]
+            [com.keminglabs/cljx "0.3.2"]]
 
   :hooks [leiningen.cljsbuild]
-
+  
   :frodo/config-resource "sample-project-config.edn"
 
   :source-paths ["src/clojure"]
