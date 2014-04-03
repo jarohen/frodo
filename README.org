@@ -308,14 +308,6 @@ work fine with CLJS REPLs. The only exception I've found so far (as of
 2013-09-14) is =M-period= and =M-comma= - jump to (and back from) a
 declaration.
 
-** CLJX support
-
-As of 0.2.4, Frodo transparently supports [[https://github.com/lynaghk/cljx][CLJX]] - if you have a =:cljx=
-key in your =project.clj=, Frodo will ensure the necessary middleware
-is in place.
-
-See [[https://github.com/lynaghk/cljx][CLJX]]'s project page for more details on how to use it.
-
 ** UberJAR support (beta)
 
 To build a batteries-included JAR file of your application, run =lein
