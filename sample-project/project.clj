@@ -19,6 +19,7 @@
   :plugins [[jarohen/lein-frodo "0.3.0-SNAPSHOT"]
             [jarohen/simple-brepl "0.1.0-SNAPSHOT"]
             [lein-cljsbuild "1.0.3"]
+            [lein-shell "0.4.0"]
 
             [lein-pdo "0.1.1"]
             [com.keminglabs/cljx "0.3.2"]]
@@ -37,7 +38,10 @@
                                    :optimizations :whitespace
                                    :pretty-print true}}]}
 
-  :aliases {"dev" ["pdo" "cljsbuild" "auto," "frodo"]
-            "start" ["do" "cljsbuild" "once," "trampoline" "frodo"]})
-
+  :aliases {"dev" ["do"
+                   ["shell" "mkdir" "-p"
+                    "target/resources"]
+                   ["pdo"
+                    ["cljsbuild" "auto"]
+                    "frodo"]]})
 
