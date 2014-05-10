@@ -5,36 +5,36 @@
 
 **** ClojureScript browser REPLs
 
-0.3.0 has some big breaking changes regarding CLJS browser REPLS, now
-relying on [[https://github.com/tomjakubowski/weasel][Weasel]] to provide the browser REPL.
+The ClojureScript browser REPL functionality has been *removed* from
+Frodo, in favour of splitting it out into a separate plugin,
+[[https://github.com/james-henderson/simple-brepl][simple-brepl]].
 
-Weasel uses WebSockets to connect the REPL to the browser, which seems
-(to me) to be a more logical abstraction to use than long-polling
-connections, and I've had far fewer reliability issues (dropped
-connections etc) with Weasel than Austin.
+*simple-brepl* uses Weasel, which in turn uses WebSockets to connect
+the REPL to the browser. WebSockets seem (to me) to be a more logical
+abstraction to use than long-polling connections, and I've had far
+fewer reliability issues (dropped connections etc) with Weasel than
+Austin.
 
-To migrate from 0.2.x to 0.3.0:
+To migrate from 0.2.x to *simple-brepl*:
 
-- In general, browser REPLs are now referred to as 'bREPL' throughout Frodo.
-
-- In your Nomad config, substitute
+- In your Nomad config, remove
   #+BEGIN_SRC clojure
     {:frodo/config {:nrepl {:cljs-repl? true}}}
   #+END_SRC
-  for
-  #+BEGIN_SRC clojure
-    {:frodo/config {:nrepl {:brepl-port 9001}}}
-  #+END_SRC
 
-- You now need to require =frodo.brepl= somewhere in your CLJS app,
+- Instead of including =[:script (frodo/repl-connect-js)]= in the
+  =<body>= of your page, include =[:script
+  (simple-brepl.service/brepl-js)]= in the =<head>=.
+
+- You now need to require =simple-brepl.client= somewhere in your CLJS app,
   rather than =clojure.browser.repl=. I do this in the main NS:
   #+BEGIN_SRC clojure
     (ns myapp-app
-      (:require frodo.brepl
+      (:require simple-brepl.client
                 ...))
   #+END_SRC
 
-- To start a bREPL, eval =(frodo-brepl)= in the =user= NS, rather than
+- To start a bREPL, eval =(simple-brepl)= in the =user= NS, rather than
   =(frodo/cljs-repl)=.
 
 **** Reloaded - new =App= protocol
