@@ -12,9 +12,8 @@
                  [hiccup "1.0.4"]
 
                  [prismatic/dommy "0.1.2"]
-
-                 [org.clojure/clojurescript "0.0-2202"]
-                 [org.clojure/tools.reader "0.8.3"]]
+                 
+                 [org.clojure/clojurescript "0.0-2202"]]
 
   :plugins [[jarohen/lein-frodo "0.3.0-SNAPSHOT"]
             [jarohen/simple-brepl "0.1.0-SNAPSHOT"]
