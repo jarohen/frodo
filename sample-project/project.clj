@@ -17,6 +17,7 @@
                  [org.clojure/tools.reader "0.8.3"]]
 
   :plugins [[jarohen/lein-frodo "0.3.0-SNAPSHOT"]
+            [jarohen/simple-brepl "0.1.0-SNAPSHOT"]
             [lein-cljsbuild "1.0.3"]
 
             [lein-pdo "0.1.1"]

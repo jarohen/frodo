@@ -1,7 +1,7 @@
 (ns sample-project.cljs.app
   (:require [dommy.core :as d]
             [clojure.string :as s]
-            frodo.brepl)
+            simple-brepl.client)
     (:require-macros [dommy.macros :refer [node sel1]]))
 
 (defn code [s]
