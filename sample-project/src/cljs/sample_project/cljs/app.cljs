@@ -1,7 +1,7 @@
 (ns sample-project.cljs.app
   (:require [dommy.core :as d]
             [clojure.string :as s]
-            frodo.brepl)
+            simple-brepl.client)
     (:require-macros [dommy.macros :refer [node sel1]]))
 
 (defn code [s]
@@ -18,7 +18,7 @@
                                     
                                     [:ul
                                      [:li [:p "In your Clojure REPL (in the 'user' ns), run " (code "(reload-frodo!)") " to completely reload the webapp. The 'started at' time above should change."]]
-                                     [:li [:p "Connect to a CLJS bREPL by running " (code "(frodo-brepl)")]]
+                                     [:li [:p "Connect to a CLJS bREPL by running " (code "(simple-brepl)")]]
                                      [:li
                                       [:p "Once you've opened the bREPL, reload your browser to make the connection, then you can eval some CLJS."]
                                       [:p "I recommend:"]

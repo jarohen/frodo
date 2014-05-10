@@ -4,7 +4,7 @@
             [compojure.route :refer [resources]]
             [compojure.handler :refer [api]]
             [hiccup.page :refer [html5 include-css include-js]]
-            [frodo.brepl :refer [brepl-js]]
+            [simple-brepl.service :refer [brepl-js]]
             [frodo.web :refer [App]]))
 
 (defn page-frame [started-time]

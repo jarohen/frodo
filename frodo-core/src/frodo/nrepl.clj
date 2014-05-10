@@ -1,8 +1,6 @@
 (ns ^{:clojure.tools.namespace.repl/load false} frodo.nrepl
     (:require [clojure.tools.nrepl.server :as nrepl]
-              [clojure.java.io :as io]
-              [frodo.brepl :as brepl]
-              [cemerick.piggieback :as p]))
+              [clojure.java.io :as io]))
 
 (defn resolve-middleware [sym]
   (let [name-space (symbol (namespace sym))]
@@ -10,10 +8,9 @@
     (ns-resolve (create-ns name-space)
                 (symbol (name sym)))))
 
-(defn repl-handler [{:keys [brepl-port nrepl-middleware]}]
+(defn repl-handler [{:keys [nrepl-middleware]}]
   (apply nrepl/default-handler
-         (cond-> (map resolve-middleware nrepl-middleware)
-           brepl-port (conj #'p/wrap-cljs-repl))))
+         (map resolve-middleware nrepl-middleware)))
 
 (defn start-nrepl! [config & [{:keys [repl-options target-path]} :as project]]
   (when-let [nrepl-port (get-in config [:frodo/config :nrepl :port])]
@@ -22,12 +19,7 @@
         (spit nrepl-port)
         (.deleteOnExit)))
 
-    (let [brepl-port (get-in config [:frodo/config :nrepl :brepl-port])]
-      (when brepl-port
-        (brepl/load-brepl! brepl-port))
-      
-      (nrepl/start-server :port nrepl-port
-                          :handler (repl-handler (assoc repl-options
-                                                   :brepl-port brepl-port)))
-      
-      (println "Started nREPL server, port" nrepl-port))))
+    (nrepl/start-server :port nrepl-port
+                        :handler (repl-handler repl-options))
+    
+    (println "Started nREPL server, port" nrepl-port)))
