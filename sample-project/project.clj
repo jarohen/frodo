@@ -20,8 +20,7 @@
             [lein-cljsbuild "1.0.3"]
             [lein-shell "0.4.0"]
 
-            [lein-pdo "0.1.1"]
-            [com.keminglabs/cljx "0.3.2"]]
+            [lein-pdo "0.1.1"]]
 
   :frodo/config-resource "sample-project-config.edn"
 
