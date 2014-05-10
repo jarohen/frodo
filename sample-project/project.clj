@@ -23,8 +23,6 @@
             [lein-pdo "0.1.1"]
             [com.keminglabs/cljx "0.3.2"]]
 
-  :hooks [leiningen.cljsbuild]
-  
   :frodo/config-resource "sample-project-config.edn"
 
   :source-paths ["src/clojure"]
