@@ -1,22 +1,108 @@
 * Changes
-** 0.2.12
+** 0.3.x
+
+*** 0.3.0
+
+**** ClojureScript browser REPLs
+
+The ClojureScript browser REPL functionality has been *removed* from
+Frodo, in favour of splitting it out into a separate plugin,
+[[https://github.com/james-henderson/simple-brepl][simple-brepl]].
+
+*simple-brepl* uses Weasel, which in turn uses WebSockets to connect
+the REPL to the browser. WebSockets seem (to me) to be a more logical
+abstraction to use than long-polling connections, and I've had far
+fewer reliability issues (dropped connections etc) with Weasel than
+Austin.
+
+To migrate from 0.2.x to *simple-brepl*:
+
+- In your Nomad config, remove
+  #+BEGIN_SRC clojure
+    {:frodo/config {:nrepl {:cljs-repl? true}}}
+  #+END_SRC
+
+- Instead of including =[:script (frodo/repl-connect-js)]= in the
+  =<body>= of your page, include =[:script
+  (simple-brepl.service/brepl-js)]= in the =<head>=.
+
+- You now need to require =simple-brepl.client= somewhere in your CLJS app,
+  rather than =clojure.browser.repl=. I do this in the main NS:
+  #+BEGIN_SRC clojure
+    (ns myapp-app
+      (:require simple-brepl.client
+                ...))
+  #+END_SRC
+
+- To start a bREPL, eval =(simple-brepl)= in the =user= NS, rather than
+  =(frodo/cljs-repl)=.
+
+**** Reloaded - new =App= protocol
+
+The recommended entry point to a Frodo application is now through the
+=frodo.web/App= protocol, a protocol with =start!= and =stop!=
+functions for you to set up and tear down state and resources.
+
+=:handler-fn= and =:handler= are still supported for backwards
+compatibility, but they may be removed in a future version.
+
+To (optionally) migrate from 0.2.x:
+
+- In your Nomad config, substitute
+  #+BEGIN_SRC clojure
+    {:frodo/config {:web {:handler-fn myapp.web/make-handler}}}
+  #+END_SRC
+  or
+  #+BEGIN_SRC clojure
+    {:frodo/config {:web {:handler myapp.web/handler}}}
+  #+END_SRC
+  for
+  #+BEGIN_SRC clojure
+    {:frodo/config {:web {:app myapp.web/app}}}
+  #+END_SRC
+
+- In =myapp/web.clj=, substitute
+  #+BEGIN_SRC clojure
+  (defn make-handler []
+    (let [db-conn (connect-db! ...)]
+      (api-routes db-conn)))
+  #+END_SRC
+  for
+  #+BEGIN_SRC clojure
+    (:require [frodo.web :refer [App]])
+    
+    (def app
+      (reify App
+    
+        (start! [_]
+          (let [db-conn (connect-db! ...)]
+            {:db-conn db-conn
+             :frodo/handler (api-routes db-conn)}))
+    
+        (stop! [_ system]
+          (disconnect-db! (:db-conn system)))))
+  #+END_SRC
+
+
+** 0.2.x
+*** 0.2.12
 
 Allowing you to include =:http-kit/options= in the =:web= map to pass
 options through to HTTP-kit
 
-** 0.2.10 / 0.2.11
+*** 0.2.10 / 0.2.11
 
 No breaking changes - updates to Nomad version. I'd advise you update
 to 0.2.11 as it includes the bugfixes in Nomad 0.6.2.
 
-** 0.2.7 / 0.2.8 / 0.2.9
+*** 0.2.7 / 0.2.8 / 0.2.9
 
 No code changes. Releases to appease Clojars - can't promote
 without :scm key, can't push over an existing release, have to make
 sure you've made a git commit before testing a clojars deploy etc etc
 etc.
 
-** 0.2.6
+*** 0.2.6
 
 Incorporating [[https://github.com/stuartsierra][Stuart Sierra]]'s '[[http://thinkrelevance.com/blog/2013/06/04/clojure-workflow-reloaded][Reloaded]]' workflow - call
 =(reload-frodo!)= from the REPL to reload the web server.
@@ -33,30 +119,30 @@ ensure the referenced function is a zero-arg function returning a web
 handler. Behaviour to be removed in 0.3.0. Existing behaviour will
 work (for now) but you'll get a deprecation warning.
 
-** 0.2.5
+*** 0.2.5
 
 Left in a cheeky println on startup - removed.
 
-** 0.2.4
+*** 0.2.4
 
 No breaking changes - CLJX support
 
-** 0.2.3
+*** 0.2.3
 
 Upstream dependency updates.
 
-** 0.2.2
+*** 0.2.2
 
 Minor bugfix - creating 'target/classes' directory if it doesn't exist
 
-** 0.2.1
+*** 0.2.1
 
 Fixed a bug whereby requiring =cemerick.austin.repls= when it wasn't
 linked threw exceptions. Now use =(frodo/repl-connect-js)= which will
 work if CLJS REPLs are turned on but won't error if they're turned off
 (e.g. in prod)
 
-** 0.2.0
+*** 0.2.0
 
 No breaking changes. Frodo now uses [[http://httpkit.org][http-kit]] to provide the
 web server. http-kit is compatible with ring and ring-jetty, so you
@@ -69,16 +155,17 @@ and will be removed in 0.3.0.
 Also, the nREPL port is now saved to =target/repl-port= to be
 consistent with =lein repl=.
 
-** 0.1.2
+** 0.1.x
+*** 0.1.2
 
 No breaking changes. Added CLJS REPL functionality.
 
-** 0.1.1
+*** 0.1.1
 
 No breaking changes. Better error handling if the user doesn't specify
 a handler.
 
-** 0.1.0
+*** 0.1.0
 
 Initial release.
 
