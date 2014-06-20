@@ -1,5 +1,8 @@
 * Changes
 ** 0.3.x
+*** 0.3.1
+
+No breaking changes - bugfix for {:aot :all} projects in uberjar
 
 *** 0.3.0
 
