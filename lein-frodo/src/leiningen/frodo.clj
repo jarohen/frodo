@@ -22,10 +22,6 @@
   (-> project
       with-frodo-core-dep
       (assoc :main 'frodo.main)
-      (update-in [:aot] (fn [aot]
-                          (if (= aot :all)
-                            :all
-                            (conj aot 'frodo.main))))
       (update-in [:filespecs] conj {:type :bytes
                                     :path "META-INF/frodo-config-resource"
                                     :bytes (:frodo/config-resource project)})
