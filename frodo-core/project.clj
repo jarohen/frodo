@@ -10,4 +10,6 @@
                  
                  [jarohen/nomad "0.6.4"]]
 
-  :scm {:dir ".."})
+  :scm {:dir ".."}
+
+  :aot [frodo.main])
