@@ -85,22 +85,25 @@
     (stop! app system)
     nil))
 
-(defn- reload-instance! [!instance config]
-  (stop-instance! !instance)
-
+(defn refresh-namespaces []
   (let [start-fn (some-> (resolve 'user/start-frodo) deref)
         stop-fn (some-> (resolve 'user/stop-frodo!) deref)
         reload-fn (some-> (resolve 'user/reload-frodo!) deref)]
     (refresh)
     (intern 'user 'start-frodo! start-fn)
     (intern 'user 'stop-frodo! stop-fn)
-    (intern 'user 'reload-frodo! reload-fn))
+    (intern 'user 'reload-frodo! reload-fn)))
+
+(defn- reload-instance! [!instance config]
+  (stop-instance! !instance)
+
+  (refresh-namespaces)
 
   (start-instance! !instance config))
 
 (defn init-web! [_config]
   (let [!instance (ref nil)]
-    (intern 'user 'start-frodo! #(do (refresh) (start-instance! !instance (_config))))
+    (intern 'user 'start-frodo! #(do (refresh-namespaces) (start-instance! !instance (_config))))
     (intern 'user 'stop-frodo! #(stop-instance! !instance))
     (intern 'user 'reload-frodo! #(reload-instance! !instance (_config)))
 
