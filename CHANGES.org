@@ -1,5 +1,13 @@
 * Changes
 ** 0.3.x
+*** 0.3.3
+
+No breaking changes - fixes #7. Frodo's reload functions no longer
+disappear after the first reload if there's a =user.clj= file present
+in the classpath.
+
+Thanks to [[https://github.com/markjfisher][Mark Fisher]] for the bug report!
+
 *** 0.3.2
 
 Simplifying the AOT - doesn't need to touch downstream projects' AOT
