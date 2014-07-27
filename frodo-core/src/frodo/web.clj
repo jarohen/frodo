@@ -90,10 +90,14 @@
   (refresh)
   (start-instance! !instance config))
 
+(defn- instance-state [!instance]
+  (:system @!instance))
+
 (defn init-web! [_config]
   (let [!instance (ref nil)]
     (intern 'user 'start-frodo! #(do (refresh) (start-instance! !instance (_config))))
     (intern 'user 'stop-frodo! #(stop-instance! !instance))
     (intern 'user 'reload-frodo! #(reload-instance! !instance (_config)))
+    (intern 'user 'frodo-system #(instance-state !instance))
 
     (start-instance! !instance (_config))))
