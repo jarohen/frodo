@@ -1,6 +1,12 @@
 * Changes
 ** 0.4.x
-*** 0.4.0
+*** 0.4.1
+
+Updating Nomad dep to 0.7.0.
+
+*** 0.4.0 (broken, do not use)
+
+Broken due to failed deploy to Clojars.
 
 Updated to provide compatibility with Nomad 0.7.0 and later - thanks
 [[https://github.com/lsnape][Luke Snape]] for the PR!
