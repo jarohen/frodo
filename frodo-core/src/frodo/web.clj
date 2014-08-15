@@ -101,10 +101,10 @@
 
   (start-instance! !instance config))
 
-(defn init-web! [_config]
+(defn init-web! [load-config]
   (let [!instance (ref nil)]
-    (intern 'user 'start-frodo! #(do (refresh-namespaces) (start-instance! !instance (_config))))
+    (intern 'user 'start-frodo! #(do (refresh-namespaces) (start-instance! !instance (load-config))))
     (intern 'user 'stop-frodo! #(stop-instance! !instance))
-    (intern 'user 'reload-frodo! #(reload-instance! !instance (_config)))
+    (intern 'user 'reload-frodo! #(reload-instance! !instance (load-config)))
 
-    (start-instance! !instance (_config))))
+    (start-instance! !instance (load-config))))

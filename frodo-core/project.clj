@@ -8,7 +8,7 @@
                  [org.clojure/tools.nrepl "0.2.3"]
                  [org.clojure/tools.namespace "0.2.4"]
                  
-                 [jarohen/nomad "0.6.4"]]
+                 [jarohen/nomad "0.6.5-rc2"]]
 
   :scm {:dir ".."}
 
