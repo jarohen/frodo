@@ -1,4 +1,10 @@
 * Changes
+** 0.4.x
+*** 0.4.0
+
+Updated to provide compatibility with Nomad 0.7.0 and later - thanks
+[[https://github.com/lsnape][Luke Snape]] for the PR!
+
 ** 0.3.x
 *** 0.3.3
 
