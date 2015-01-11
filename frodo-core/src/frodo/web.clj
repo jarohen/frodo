@@ -15,7 +15,7 @@
 
      The return value of this function is passed to the 'stop!' function
      when the web server shuts down.")
-  
+
   (stop! [_ system]
     "A function called when the web server stops, used to tear down any
      necessary system state.
@@ -106,5 +106,6 @@
     (intern 'user 'start-frodo! #(do (refresh-namespaces) (start-instance! !instance (load-config))))
     (intern 'user 'stop-frodo! #(stop-instance! !instance))
     (intern 'user 'reload-frodo! #(reload-instance! !instance (load-config)))
+    (intern 'user 'frodo-instance #(@!instance))
 
     (start-instance! !instance (load-config))))
