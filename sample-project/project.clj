@@ -15,7 +15,7 @@
                  
                  [org.clojure/clojurescript "0.0-2202"]]
 
-  :plugins [[jarohen/lein-frodo "0.3.0-SNAPSHOT"]
+  :plugins [[jarohen/lein-frodo "0.4.2"]
             [jarohen/simple-brepl "0.1.0-SNAPSHOT"]
             [lein-cljsbuild "1.0.3"]
             [lein-shell "0.4.0"]

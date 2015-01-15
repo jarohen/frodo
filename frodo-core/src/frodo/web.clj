@@ -15,7 +15,7 @@
 
      The return value of this function is passed to the 'stop!' function
      when the web server shuts down.")
-  
+
   (stop! [_ system]
     "A function called when the web server stops, used to tear down any
      necessary system state.
@@ -88,11 +88,13 @@
 (defn refresh-namespaces []
   (let [start-fn (some-> (resolve 'user/start-frodo) deref)
         stop-fn (some-> (resolve 'user/stop-frodo!) deref)
-        reload-fn (some-> (resolve 'user/reload-frodo!) deref)]
+        reload-fn (some-> (resolve 'user/reload-frodo!) deref)
+        instance-fn (some-> (resolve 'user/frodo-instance) deref)]
     (refresh)
     (intern 'user 'start-frodo! start-fn)
     (intern 'user 'stop-frodo! stop-fn)
-    (intern 'user 'reload-frodo! reload-fn)))
+    (intern 'user 'reload-frodo! reload-fn)
+    (intern 'user 'frodo-instance instance-fn)))
 
 (defn- reload-instance! [!instance config]
   (stop-instance! !instance)
@@ -106,5 +108,6 @@
     (intern 'user 'start-frodo! #(do (refresh-namespaces) (start-instance! !instance (load-config))))
     (intern 'user 'stop-frodo! #(stop-instance! !instance))
     (intern 'user 'reload-frodo! #(reload-instance! !instance (load-config)))
+    (intern 'user 'frodo-instance #(@!instance))
 
     (start-instance! !instance (load-config))))

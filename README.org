@@ -16,7 +16,7 @@ via configuration in Nomad.
 Include =lein-frodo= as a plugin in your =project.clj=:
 
 #+BEGIN_SRC clojure
-  :plugins [[jarohen/lein-frodo "0.4.1"]]
+  :plugins [[jarohen/lein-frodo "0.4.2"]]
 #+END_SRC
 
 Frodo versions earlier than 0.4.1 are not compatible with Nomad 0.7.0
@@ -227,6 +227,8 @@ Essentially:
   old state and start afresh. This will stop the web server, refresh
   any changed code files, and restart the web server, without
   restarting the JVM. This typically takes less than a second.
+- Call =(frodo-instance)= to get access to the currently running
+  instance.
 
 To restart the web server from your REPL:
 
