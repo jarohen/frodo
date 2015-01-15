@@ -16,7 +16,7 @@ via configuration in Nomad.
 Include =lein-frodo= as a plugin in your =project.clj=:
 
 #+BEGIN_SRC clojure
-  :plugins [[jarohen/lein-frodo "0.4.1"]]
+  :plugins [[jarohen/lein-frodo "0.4.2"]]
 #+END_SRC
 
 Frodo versions earlier than 0.4.1 are not compatible with Nomad 0.7.0

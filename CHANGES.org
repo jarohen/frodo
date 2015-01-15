@@ -1,5 +1,10 @@
 * Changes
 ** 0.4.x
+*** 0.4.2
+
+Added =(frodo-instance)=, to get access to the current Frodo instance.
+
+Thanks to [[https://github.com/glittershark][Griffin Smith]] for the PR!
 *** 0.4.1
 
 Updating Nomad dep to 0.7.0.
