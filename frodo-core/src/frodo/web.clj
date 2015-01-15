@@ -88,11 +88,13 @@
 (defn refresh-namespaces []
   (let [start-fn (some-> (resolve 'user/start-frodo) deref)
         stop-fn (some-> (resolve 'user/stop-frodo!) deref)
-        reload-fn (some-> (resolve 'user/reload-frodo!) deref)]
+        reload-fn (some-> (resolve 'user/reload-frodo!) deref)
+        instance-fn (some-> (resolve 'user/frodo-instance) deref)]
     (refresh)
     (intern 'user 'start-frodo! start-fn)
     (intern 'user 'stop-frodo! stop-fn)
-    (intern 'user 'reload-frodo! reload-fn)))
+    (intern 'user 'reload-frodo! reload-fn)
+    (intern 'user 'frodo-instance instance-fn)))
 
 (defn- reload-instance! [!instance config]
   (stop-instance! !instance)
